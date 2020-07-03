@@ -1,0 +1,16 @@
+*.nb.html
+*.knit.md
+*.utf8.md
+
+.DS_Store
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+.Rproj.user/

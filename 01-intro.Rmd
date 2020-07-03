@@ -1,0 +1,350 @@
+---
+title: "Tidyverse and dplyr basics"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval=FALSE
+)
+```
+
+*The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+# Setup
+
+```{r, eval=TRUE}
+library(tidyverse)
+```
+
+This gives you info on which packages it actually loaded, because when you install tidyverse, it installs ~25 packages, but it only loads the ones listed.  Tidyverse packages also tend to be verbose in warning you when there are functions with the same name in multiple packages.
+
+## Background
+
+Tidyverse packages do a few things:
+
+* fix some of the annoying parts of using R, such as changing default options when importing data files and preventing large data frames from printing to the console
+* are focused on working with data frames (and their columns), rather than individual vectors
+* usually take a data frame as the first input to a function, and return a data frame as the output of a function, so that function calls can be more easily strung together in a sequence
+* share some common naming conventions for functions and arguments that have a goal of making code more readable
+* tend to be verbose, opinionated, and are actively working to provide more useful error messages
+
+Tidyverse packages are particularly useful for:
+
+* data exploration
+* reshaping data sets
+* computing summary measures over groups
+* cleaning up different types of data
+* reading and writing data
+
+## Data
+
+Let's grab the data we'll be using.  We're going to use the `read_csv` function from the `readr` package, which is part of the tidyvere.
+
+The data is from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) and includes vehicle stops by the Evanston police in 2017.  
+
+We're reading from a URL directly, which is something you can do with `read_csv` or base R function `read.csv`.  
+
+```{r, eval=TRUE}
+police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv",
+                   col_types=c("beat"="c"))
+```
+
+The `read_csv` function works like `read.csv` except is has some different defaults, guesses data types a bit differently, and produces a tibble instead of a normal data frame (details coming).  
+
+The `col_types` argument functions like colClasses for `read.csv` -- it allows us to say which type of data is in a particular column instead of having the function just guess and determine the type for us.  Here we're saying that the column named "beat" has "c"haracter type data in it.  By default, the function will think it's numeric data, because most of the values are numbers, including all of the first 1000 rows that the function uses by default to guess what type of data is in each column.  
+
+One of the big other differences, which was relevant before R version 4.0 came out this year, is that `read_csv` does not import text data as factors, while `read.csv` had `stringAsFactors=FALSE` by default prior to R 4.0.  
+
+# Tibbles
+
+Tibbles are the tidyverse version of a data frame.  You can use them as you would a data frame (they are one), but they behave in slightly different ways.
+
+```{r, eval=TRUE}
+police
+```
+
+The most observable difference is that tibbles will only print 10 rows and the columns that will fit in your console.  When they print, they print a list of column names and the types of the columns that are shown.  
+
+To view the dataset, use `View()`:
+
+```{r}
+View(police)
+```
+
+When using [] notation to subset them, they will always return a tibble.  In constrast, data frames sometimes return a data frame and sometimes return just a vector.
+
+```{r}
+police[, 1]
+as.data.frame(police)[, 1]
+```
+
+Tibbles are also stricter about name matching, there are some utility functions to help create them manually, and they essentially ignore row names.  
+
+
+# dplyr
+
+dplyr is at the core of the tidyverse.  It is for working with data frames.  It contains six main functions, each a verb, of actions you frequently take with a data frame.  We're covering 3 of those functions today (select, filter, mutate), and 3 more next week (group_by, summarize, arrange).
+
+Each of these function takes a data frame as the first input.  Within the function call, we can refer to the column names without quotes and without $ notation.
+
+## Select: Choose Columns
+
+The select function is for selecting which columns to keep (or exclude) from the data set:
+
+```{r}
+select(police, date, outcome)
+```
+
+The first input is the name of a data frame.  Then we can list one or more columns that we want to select after that, comma separated.  Notice there are no quotes around the column names, and we don't need to preface the names with anything (similar to what we do with the formula syntax in base R).  
+
+```{r}
+select(police, date, outcome)
+```
+
+We can name all of the columns we want, like above.  We can also say which columns we don't want by putting a `-` in front of the name:
+
+```{r}
+select(police, -raw_row_number, -subject_age)
+```
+
+As with [] indexing, columns will be returned in the order specified:
+
+```{r}
+select(police, subject_sex, subject_race, date)
+```
+
+We could also use the column index number if we wanted to instead.  We don't need to put the values in `c()` like we would with [] (but we could).
+
+```{r}
+select(police, 1, 4, 10)
+```
+
+
+There are a number of select helper functions and special syntax options that allow us to choose what columns we want to keep.
+
+First, we can use : for range, but with names in addition to numbers:
+
+```{r}
+select(police, raw_DriverRace:raw_ResultOfStop)
+```
+
+We can select the rightmost columns with `last_col()`:
+
+```{r}
+select(police, last_col())
+```
+
+Last 4 columns:
+
+```{r}
+select(police, last_col(0:3))
+```
+
+We can also select by matching patterns in the names of the columns:
+
+```{r}
+select(police, starts_with("raw"))
+```
+
+```{r}
+select(police, ends_with("issued"))
+```
+
+```{r}
+select(police, contains("vehicle"))
+```
+
+We can also put a `-` in front of these helper functions to exclude columns:
+
+```{r}
+select(police, -contains("subject"))
+```
+
+
+And there are even more helper functions.  
+
+### EXERCISE
+
+Use `select()` to get a copy of police without the columns that start with "raw".
+
+```{r}
+
+```
+
+Hint: If you mess something up, re-run the cell near the top of the file and read the data in again fresh.
+
+### Renaming
+
+We can also rename columns while using `select()`.  The syntax is `new_name = old_name`.
+
+```{r}
+select(police, raw_id=raw_row_number, date, time)
+```
+
+
+or we can use `rename()` to only rename, without affecting which columns are included:
+
+```{r}
+rename(police, raw_id=raw_row_number)
+```
+
+This doesn't change police because we didn't save the result.  So far, we've just been printing the copy of the data frame that is returned by the function.  If we want to change our data frame, we'd need to save the result back to the `police` object.
+
+```{r}
+police <- rename(police, raw_id=raw_row_number)
+```
+
+
+## Filter: Choose Rows
+
+The `filter()` function lets us choose which rows of data to keep.  Takes the data frame name first, and then any expression that will return a vector of TRUE and FALSE values that is the same length as the number of rows in the data frame.
+
+```{r}
+filter(police, date == "2017-01-02")
+```
+
+We can do complex conditions as we could do with []
+
+```{r}
+filter(police, subject_race == "hispanic" & subject_sex == "female")
+```
+
+
+### EXERCISE
+
+Filter to choose the rows where location is not 60201 or 60202.
+
+```{r}
+
+```
+
+
+## Pipe: Chaining Commands Together
+
+So, we can choose rows and choose columns separately; how do we combine these operations?  dplyr, and other tidyverse, commands can be strung together is a series with a `%>%` (say: pipe) operator.  It works like a bash pipe character `|`.  It takes the output of the command on the left and makes that the first input to the command on the right.
+
+We can rewrite 
+
+```{r}
+select(police, date, time)
+```
+
+as
+
+```{r}
+police %>% select(date, time)
+```
+
+and you'll often see code formatted, so `%>%` is at the end of each line:
+
+```{r}
+police %>%
+  select(date, time)
+```
+
+The pipe comes from a package called magrittr, which has additional special operators in it that you can use.  The keyboard shortcut for %>% is command-shift-M (Mac) or control-shift-M (Windows).
+
+We can use the pipe to string together multiple commands operating on the same data frame:
+
+```{r}
+police %>%
+  select(subject_race, subject_sex) %>%
+  filter(subject_race == "white")
+```
+
+We would read the `%>%` in the command above as "then" if reading the code outloud: from police, select subject_race and subject_sex, then filter where subject_race is white.
+
+Order does matter, as the commands are executed in order.  So this would give us an error:
+
+```{r}
+police %>%
+  select(subject_sex, outcome) %>%
+  filter(subject_race == "white")
+```
+
+Because `subject_race` is no longer in the data frame once we try to filter on it.  We'd have to reverse the order:
+
+```{r}
+police %>%
+  filter(subject_race == "white") %>%
+  select(subject_sex, outcome)
+```
+
+You can use the pipe operator to string together commands outside of the tidyverse as well:
+
+```{r}
+# sort(table(police$subject_race)) becomes: 
+table(police$subject_race) %>% sort()
+```
+
+
+### EXERCISE
+
+Select the date, time, and outcome (columns) of stops that occur in beat 71 (rows).  Hint: remember that a column needs to still be in the data frame if you're going to use it to filter.
+
+```{r}
+
+```
+
+
+
+## Mutate: Change or Create Columns
+
+`mutate()` is used to both change the values of an existing column and make a new column.  
+
+```{r}
+mutate(police, vehicle_age = 2017 - vehicle_year) %>%
+  select(starts_with("vehicle"))
+```
+
+Within a call to mutate, we can refer to variables we made or changed earlier in the same call as well.  Here, we create vehicle_age, and then use it to create vehicle_age_norm:
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017 - vehicle_year, 
+         vehicle_age_norm = ifelse(vehicle_age < 0, 0, vehicle_age)) %>%
+  select(starts_with("vehicle")) %>%
+  filter(vehicle_age < 0)
+```
+
+Side note: there is a tidyverse version of `ifelse()` called `if_else()` that works generally the same except it is stricter about checking data types.
+
+`mutate()` can also change an existing column.  The location column in the data contains zip codes, that were read in as numeric values.  This means the leading zero on some zip codes has been lost.  Convert location to character data, and add back in the leading 0 if it should be there.
+
+Here I'll change the location column twice in the same call with two different transformations:
+
+```{r}
+police %>%
+  mutate(location = as.character(location),
+         location = ifelse(nchar(location) == 4, paste0("0", location), location)) %>%
+  select(location) %>%
+  filter(startsWith(location, "0")) 
+```
+
+Remember that when using `mutate()`, you're operating on the entire column at once, so you can't select just a subset of the vector as you would with [].  This means more frequently using functions like `ifelse()` or helper functions such as `na_if()`, `replace_na()`, or `recode()`.  
+
+```{r}
+mutate(police, vehicle_make = na_if(vehicle_make, "UNK"))
+```
+
+
+### EXERCISE
+
+If beat is / or CHICAGO, set it to NA instead using `mutate()`.  
+
+Hint: if you use `na_if()`, it only can check and replace one value at a time, so you'd need to use it twice.  With `ifelse()` you can write an expression like (`beat == '/' | beat == 'CHICAGO'`) or (`beat %in% c('/', 'CHICAGO')`) for the first input (the TRUE/FALSE test).  
+
+```{r}
+
+```
+
+# Recap
+
+We learned the dplyr equivalents of indexing and subsetting a data frame, of creating new variables in our data frame, and of recoding variables in our data frame.  We also learned about the pipe `%>%` operator, and what tibbles are.
+
+Next week: the three other common dplyr "verb" functions for working with data frames: group_by, summarize, and arrange.  
