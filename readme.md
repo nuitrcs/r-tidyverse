@@ -29,8 +29,8 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 
 *Download links should prompt you to save the linked .Rmd file, but behavior may vary across browsers.* You can always [download this entire  repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead.
 
-* Session 1: Tidyverse basics, dplyr – select, filter, mutate.  [download](https://nuitrcs.github.io/r-tidyverse/01-intro.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/01-intro.html)  
-* Session 2: dplyr – group by, summarize, arrange, across.  [download](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.html)        
+* Session 1: Tidyverse basics, dplyr – select, filter, mutate.  [download](https://nuitrcs.github.io/r-tidyverse/01-intro.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/01-intro.html)  
+* Session 2: dplyr – group by, summarize, arrange, across.  [download](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/02-dplyr-group.html)        
 * Session 3: dplyr – joins - working with two data frames. 
 * Session 4: a quick intro to ggplot2.  
 * Session 5: tidyr – pivot_longer, pivot_wider, separate, separate_rows.  
