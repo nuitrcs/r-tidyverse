@@ -1,0 +1,311 @@
+---
+title: "dplyr grouping"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  eval=FALSE
+)
+```
+
+*The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+# Setup
+
+```{r, eval=TRUE}
+library(tidyverse)
+```
+
+For this session, we're learning three additional dplyr functions: group_by, summarize, and arrange.
+
+## Data
+
+We're using the same data as session 1.  
+
+```{r, eval=TRUE}
+police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv",
+                   col_types=c("beat"="c", "location"="c"))
+```
+
+
+# Summarize
+
+We'll start with `summarize()` (or `summarise()`).  We use `mutate()` when we want the output to have the same length as the input -- when we're operating on individual elements in a vector.  When we want to condense multiple values down to a single (or a few values), such as taking the mean or standard deviation of a vector), we use summarize instead.
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>% # computing a new variable first
+  summarize(mean_vehicle_age = mean(vehicle_age))
+```
+
+Note that even though there's just one value, we get a tibble returned.  This is what to expect with the tidyverse.
+
+As a side note, if we needed the single value (or a single vector), we could `pull()` it:
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>% # computing a new variable first
+  summarize(mean_vehicle_age = mean(vehicle_age)) %>%
+  pull()
+```
+
+We can compute more than one summary measure at the same time:
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>% # computing a new variable first
+  summarize(mean_vehicle_age = mean(vehicle_age),
+            sd_vehicle_age = sd(vehicle_age),
+            min_date = min(date),
+            max_date = max(date))
+```
+
+We get one column per summary variable we create.  Once we group below, we'll see why we get the output in columns instead of rows.
+
+
+## EXERCISE
+
+Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function.
+
+```{r}
+
+```
+
+
+## Across
+
+If we want to apply the same summary functions to multiple columns in our data frame, we can write out all of the summary commands explicitly, or we can use `across()` to select which variables to summarize with which functions.
+
+Let's use the `n_distinct()` function to count the number of distinct values in each column.  This will help us see which columns don't have useful information because everything is the same.
+
+`across()` selects columns using any syntax you could give to `select()` directly.  We'll use `everything()` here to select all columns.
+
+```{r}
+police %>%
+  summarize(across(everything(), n_distinct))
+```
+
+If we want to apply multiple functions:
+
+```{r}
+police %>%
+  summarize(across(!where(is.character), ## select columns that are not of type character
+                   list(min, max)))   # take the min and max of each column
+```
+
+To fix the names in the output, explicitly name our summary functions:
+
+```{r}
+police %>%
+  summarize(across(!where(is.character), ## select columns that are not of type character
+                   list(min_val=min, max_val=max)))   # take the min and max of each column
+```
+
+There are other options for output naming patterns available too.
+
+
+### EXERCISE
+
+The code below defines a function `na_count()` that counts the number of missing values in a vector.  Apply it to all columns in the police data with `summarize()` and `across()`.
+
+```{r}
+na_count <- function(x) {
+  sum(is.na(x))
+}
+
+police %>%
+  summarize(across(___, ___))
+```
+
+Instead of creating the function ahead of time, we could define it as part of the summarize call.  We use `.x` to stand in for each column, and we put `~` in front of the expression to singal we're creating a function in place (lambda function). 
+
+```{r}
+police %>%
+  summarize(across(everything(),
+                   ~sum(is.na(.x))))  # define a function here that operates on each column
+```
+
+
+
+
+# Group By
+
+With base R, when we want to compute summary measures or do other computation on groups in our data (as defined by some grouping variable), we use functions such as `tapply()` or `aggregate()`.  With dplyr, we can explicitly group our tibble into subgroups.  This isn't very useful by itself, but it is often combined with `summarize()` to compute summary measures by group.
+
+First, what if we just group:
+
+```{r}
+police %>%
+  group_by(outcome)
+```
+
+When we print this in the console, 
+
+```
+# A tibble: 14,792 x 29
+# Groups:   outcome [2]
+   raw_row_number date       time  location beat  subject_age subject_race subject_sex department_id
+            <dbl> <date>     <tim>    <dbl> <chr> <lgl>       <chr>        <chr>               <dbl>
+ 1       11249746 2017-01-01 00:56    60202 72    NA          white        male                13178
+ 2       11249747 2017-01-01 04:43    60643 71    NA          black        male                13178
+ 3       11249748 2017-01-01 09:21    60625 78    NA          black        female              13178
+...
+```
+
+we see that it tells us that the tibble (data frame) is grouped by outcome, and that there are two groups.  It doesn't rearrange the rows, it just keeps track of the groups for us. 
+
+Now, combine with summarize:
+
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>%
+  group_by(subject_sex) %>%
+  summarize(mean_vehicle_age = mean(vehicle_age),
+            sd_vehicle_age = sd(vehicle_age))
+```
+
+Now we get one row for each group, and one column for each summary measure.
+
+We can group by multiple columns:
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>%
+  group_by(subject_sex, subject_race) %>%
+  summarize(mean_vehicle_age = mean(vehicle_age),
+            sd_vehicle_age = sd(vehicle_age))
+```
+
+Let's compute the ratio of warnings to citations by subject_race:
+
+```{r}
+police %>%
+  group_by(subject_race) %>%
+  summarize(warnings = sum(outcome == "warning"),
+            citations = sum(outcome == "citation"), 
+            ratio = warnings/citations)
+```
+
+There's considerable variation here, from 1.1 warnings for every citation given to 2.2 warnings for every citation given.
+
+## EXERCISE
+
+Compute the `min()` and `max()` `vehicle_year` for each `vehicle_make`.
+
+```{r}
+
+```
+
+
+
+
+## Ungrouping
+
+If you ever have a grouped data frame, you may need to ungroup it to get rid of the groups.  To do so, use `ungroup()`:
+
+```{r}
+poilce %>% 
+  group_by(outcome) %>%
+  ungroup()
+```
+
+
+## Slicing
+
+One operation we could do with a grouped tibble is to select just certain rows from each group.  For example, we could use the `slice()` function to select the first row from each group:
+
+```{r}
+police %>%
+  select(outcome, everything()) %>%  # to reorder columns for output
+  group_by(outcome) %>%
+  slice(1)
+```
+
+
+
+
+# Arrange
+
+Finally, we come to `arrange()`, which is how we sort the rows in our data.  We would mostly use this when viewing our data, but it's also useful when we need to compute a time series (lags and leads in the data), when we want to select just a few rows from each group, or any other order-sensitive transformations on our data.
+
+```{r}
+arrange(police, time)
+```
+
+To sort in reverse order, wrap the column name in `desc()`.  
+
+```{r}
+arrange(police, desc(date))
+```
+
+```{r}
+arrange(police, desc(date), desc(time))
+```
+
+An example where it matters: compute time between stops in the dataset:
+
+```{r}
+police %>%
+  arrange(date, time) %>%
+  mutate(datetime = lubridate::ymd_hms(paste(date, time)),  # combine to single value
+         time_since_last = datetime - lag(datetime)) %>%  # current time - previous time
+  select(datetime, time_since_last)
+```
+
+
+## EXERCISE
+
+Sort the data by vehicle_make and then vehicle_year.
+
+```{r}
+
+```
+
+
+# Count
+
+A bonus function that I use frequently: `count()`.  It's how you make tables with dplyr.
+
+By itself, it counts the number of rows:
+
+```{r}
+police %>%
+  count()
+```
+
+If you supply the name of a column, it makes a table:
+
+```{r}
+police %>%
+  count(subject_sex)
+```
+
+This is the same result as if you grouped the data first:
+
+```{r}
+police %>%
+  group_by(subject_sex) %>%
+  count()
+```
+
+You can group by multiple columns directly with count:
+
+```{r}
+police %>%
+  count(subject_sex, subject_race)
+```
+
+
+# Recap
+
+We've now covered the core dplyr functions: six "verbs" of common actions we may take with a data frame.  There are lots of helper functions, variations, and special cases that can come up when using these functions, but we've covered the essentials.  
+
+All of these functions were for working with a single data frame.  Next session we'll talk about dplyr functions that will help us combine two different data frames together.  
+
+
