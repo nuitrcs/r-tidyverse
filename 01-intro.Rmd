@@ -8,9 +8,7 @@ editor_options:
 ---
 
 ```{r, setup, include=FALSE}
-knitr::opts_chunk$set(
-  eval=FALSE
-)
+knitr::opts_chunk$set(eval=FALSE)  # when making the html version of this file, don't execute the code
 ```
 
 *The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
@@ -102,10 +100,6 @@ select(police, date, outcome)
 
 The first input is the name of a data frame.  Then we can list one or more columns that we want to select after that, comma separated.  Notice there are no quotes around the column names, and we don't need to preface the names with anything (similar to what we do with the formula syntax in base R).  
 
-```{r}
-select(police, date, outcome)
-```
-
 We can name all of the columns we want, like above.  We can also say which columns we don't want by putting a `-` in front of the name:
 
 ```{r}
@@ -124,7 +118,6 @@ We could also use the column index number if we wanted to instead.  We don't nee
 select(police, 1, 4, 10)
 ```
 
-
 There are a number of select helper functions and special syntax options that allow us to choose what columns we want to keep.
 
 First, we can use : for range, but with names in addition to numbers:
@@ -139,7 +132,7 @@ We can select the rightmost columns with `last_col()`:
 select(police, last_col())
 ```
 
-Last 4 columns:
+Last 4 columns (the input to the function is the offset # of columns from the right edge):
 
 ```{r}
 select(police, last_col(0:3))
@@ -217,7 +210,7 @@ filter(police, subject_race == "hispanic" & subject_sex == "female")
 
 ### EXERCISE
 
-Filter to choose the rows where location is not 60201 or 60202.
+Filter to choose the rows where location is not 60201 or 60202 (hint: `!=` is the not equals operator, or you could use `!` in combination with `%in%`.
 
 ```{r}
 
@@ -320,10 +313,12 @@ Here I'll change the location column twice in the same call with two different t
 
 ```{r}
 police %>%
-  mutate(location = as.character(location),
-         location = ifelse(nchar(location) == 4, paste0("0", location), location)) %>%
-  select(location) %>%
-  filter(startsWith(location, "0")) 
+  mutate(location = as.character(location),  # first convert to character, then recode below
+         location = ifelse(nchar(location) == 4,  # ifelse test (vector of TRUE and FALSE)
+                           paste0("0", location), # value if TRUE
+                           location)) %>%  # value if FALSE
+  select(location) %>%  # selecting just the column we mutated to look at
+  filter(startsWith(location, "0"))  # selecting a few rows to look at the change
 ```
 
 Remember that when using `mutate()`, you're operating on the entire column at once, so you can't select just a subset of the vector as you would with [].  This means more frequently using functions like `ifelse()` or helper functions such as `na_if()`, `replace_na()`, or `recode()`.  

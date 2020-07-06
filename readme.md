@@ -40,3 +40,5 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 
 [R for Data Science](https://r4ds.had.co.nz/) covers the use of tidyverse packages for data analysis in depth.  Written by two of the authors of these packages, this free online book is a good place to go for additional information and practice.
 
+[RStudio Videos](https://www.youtube.com/watch?v=jOd65mR1zfw&list=PL9HYL-VRX0oQOWAFoKHFQAsWAI3ImbNPk): Data Wrangingling with R and the Tidyverse.  These cover material from roughly the first 3 sessions of this workshop series.  
+
