@@ -70,7 +70,7 @@ We get one column per summary variable we create.  Once we group below, we'll se
 
 ## EXERCISE
 
-Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function.
+Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function (`count = n()`).
 
 ```{r}
 
