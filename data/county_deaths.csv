@@ -1,5 +1,4 @@
-countyFIPS,county,state,stateFIPS,total
-0,Statewide Unallocated,AL,1,0
+countyFIPS,county,state,stateFIPS,deaths
 1001,Autauga County,AL,1,13
 1003,Baldwin County,AL,1,10
 1005,Barbour County,AL,1,2
@@ -67,7 +66,6 @@ countyFIPS,county,state,stateFIPS,total
 1129,Washington County,AL,1,7
 1131,Wilcox County,AL,1,8
 1133,Winston County,AL,1,3
-0,Statewide Unallocated,AK,2,2
 2013,Aleutians East Borough,AK,2,0
 2016,Aleutians West Census Area,AK,2,0
 2020,Municipality of Anchorage,AK,2,6
@@ -98,7 +96,6 @@ countyFIPS,county,state,stateFIPS,total
 2275,Wrangell City and Borough,AK,2,0
 2282,Yakutat City and Borough,AK,2,0
 2290,Yukon-Koyukuk Census Area,AK,2,0
-0,Statewide Unallocated,AZ,4,0
 4001,Apache County,AZ,4,99
 4003,Cochise County,AZ,4,17
 4005,Coconino County,AZ,4,97
@@ -114,7 +111,6 @@ countyFIPS,county,state,stateFIPS,total
 4023,Santa Cruz County,AZ,4,27
 4025,Yavapai County,AZ,4,11
 4027,Yuma County,AZ,4,117
-0,Statewide Unallocated,AR,5,0
 5001,Arkansas County,AR,5,0
 5003,Ashley County,AR,5,1
 5005,Baxter County,AR,5,0
@@ -190,7 +186,6 @@ countyFIPS,county,state,stateFIPS,total
 5145,White County,AR,5,2
 5147,Woodruff County,AR,5,0
 5149,Yell County,AR,5,5
-0,Statewide Unallocated,CA,6,0
 6000,Grand Princess Cruise Ship,CA,6,0
 6001,Alameda County,CA,6,140
 6003,Alpine County,CA,6,0
@@ -250,7 +245,6 @@ countyFIPS,county,state,stateFIPS,total
 6111,Ventura County,CA,6,50
 6113,Yolo County,CA,6,26
 6115,Yuba County,CA,6,2
-0,Statewide Unallocated,CO,8,0
 8001,Adams County,CO,8,156
 8003,Alamosa County,CO,8,5
 8005,Arapahoe County,CO,8,346
@@ -315,7 +309,6 @@ countyFIPS,county,state,stateFIPS,total
 8121,Washington County,CO,8,0
 8123,Weld County,CO,8,138
 8125,Yuma County,CO,8,0
-0,Statewide Unallocated,CT,9,0
 9001,Fairfield County,CT,9,1377
 9003,Hartford County,CT,9,1380
 9005,Litchfield County,CT,9,137
@@ -324,12 +317,10 @@ countyFIPS,county,state,stateFIPS,total
 9011,New London County,CT,9,102
 9013,Tolland County,CT,9,64
 9015,Windham County,CT,9,14
-0,Statewide Unallocated,DE,10,0
 10001,Kent County,DE,10,92
 10003,New Castle County,DE,10,247
 10005,Sussex County,DE,10,175
 11001,Washington,DC,11,561
-0,Statewide Unallocated,FL,12,0
 12001,Alachua County,FL,12,12
 12003,Baker County,FL,12,4
 12005,Bay County,FL,12,5
@@ -397,7 +388,6 @@ countyFIPS,county,state,stateFIPS,total
 12129,Wakulla County,FL,12,1
 12131,Walton County,FL,12,9
 12133,Washington County,FL,12,13
-0,Statewide Unallocated,GA,13,51
 13001,Appling County,GA,13,14
 13003,Atkinson County,GA,13,2
 13005,Bacon County,GA,13,4
@@ -557,13 +547,11 @@ countyFIPS,county,state,stateFIPS,total
 13317,Wilkes County,GA,13,1
 13319,Wilkinson County,GA,13,8
 13321,Worth County,GA,13,22
-0,Statewide Unallocated,HI,15,0
 15001,Hawaii County,HI,15,0
 15003,Honolulu County,HI,15,13
 15005,Kalawao County,HI,15,0
 15007,Kauai County,HI,15,0
 15009,Maui County,HI,15,6
-0,Statewide Unallocated,ID,16,0
 16001,Ada County,ID,16,23
 16003,Adams County,ID,16,0
 16005,Bannock County,ID,16,1
@@ -608,7 +596,6 @@ countyFIPS,county,state,stateFIPS,total
 16083,Twin Falls County,ID,16,25
 16085,Valley County,ID,16,0
 16087,Washington County,ID,16,1
-0,Statewide Unallocated,IL,17,0
 17001,Adams County,IL,17,1
 17003,Alexander County,IL,17,0
 17005,Bond County,IL,17,1
@@ -711,7 +698,6 @@ countyFIPS,county,state,stateFIPS,total
 17199,Williamson County,IL,17,4
 17201,Winnebago County,IL,17,97
 17203,Woodford County,IL,17,2
-0,Statewide Unallocated,IN,18,0
 18001,Adams County,IN,18,1
 18003,Allen County,IN,18,132
 18005,Bartholomew County,IN,18,44
@@ -804,7 +790,6 @@ countyFIPS,county,state,stateFIPS,total
 18179,Wells County,IN,18,1
 18181,White County,IN,18,10
 18183,Whitley County,IN,18,5
-0,Statewide Unallocated,IA,19,0
 19001,Adair County,IA,19,0
 19003,Adams County,IA,19,0
 19005,Allamakee County,IA,19,4
@@ -904,7 +889,6 @@ countyFIPS,county,state,stateFIPS,total
 19193,Woodbury County,IA,19,44
 19195,Worth County,IA,19,0
 19197,Wright County,IA,19,1
-0,Statewide Unallocated,KS,20,0
 20001,Allen County,KS,20,0
 20003,Anderson County,KS,20,0
 20005,Atchison County,KS,20,0
@@ -1010,7 +994,6 @@ countyFIPS,county,state,stateFIPS,total
 20205,Wilson County,KS,20,0
 20207,Woodson County,KS,20,0
 20209,Wyandotte County,KS,20,85
-0,Statewide Unallocated,KY,21,0
 21001,Adair County,KY,21,19
 21003,Allen County,KY,21,7
 21005,Anderson County,KY,21,1
@@ -1131,7 +1114,6 @@ countyFIPS,county,state,stateFIPS,total
 21235,Whitley County,KY,21,0
 21237,Wolfe County,KY,21,0
 21239,Woodford County,KY,21,0
-0,Statewide Unallocated,LA,22,0
 22001,Acadia Parish,LA,22,43
 22003,Allen Parish,LA,22,11
 22005,Ascension Parish,LA,22,59
@@ -1196,7 +1178,6 @@ countyFIPS,county,state,stateFIPS,total
 22123,West Carroll Parish,LA,22,5
 22125,West Feliciana Parish,LA,22,14
 22127,Winn Parish,LA,22,5
-0,Statewide Unallocated,ME,23,0
 23001,Androscoggin County,ME,23,4
 23003,Aroostook County,ME,23,1
 23005,Cumberland County,ME,23,65
@@ -1213,7 +1194,6 @@ countyFIPS,county,state,stateFIPS,total
 23027,Waldo County,ME,23,14
 23029,Washington County,ME,23,0
 23031,York County,ME,23,11
-0,Statewide Unallocated,MD,24,67
 24001,Allegany County,MD,24,18
 24003,Anne Arundel County,MD,24,210
 24005,Baltimore County,MD,24,486
@@ -1238,7 +1218,6 @@ countyFIPS,county,state,stateFIPS,total
 24045,Wicomico County,MD,24,41
 24047,Worcester County,MD,24,17
 24510,Baltimore City,MD,24,352
-0,Statewide Unallocated,MA,25,7
 25001,Barnstable County,MA,25,150
 25003,Berkshire County,MA,25,45
 25005,Bristol County,MA,25,592
@@ -1253,7 +1232,6 @@ countyFIPS,county,state,stateFIPS,total
 25023,Plymouth County,MA,25,669
 25025,Suffolk County,MA,25,1008
 25027,Worcester County,MA,25,943
-0,Statewide Unallocated,MI,26,73
 26001,Alcona County,MI,26,1
 26003,Alger County,MI,26,0
 26005,Allegan County,MI,26,7
@@ -1337,7 +1315,6 @@ countyFIPS,county,state,stateFIPS,total
 26161,Washtenaw County,MI,26,107
 26163,Wayne County,MI,26,2741
 26165,Wexford County,MI,26,4
-0,Statewide Unallocated,MN,27,0
 27001,Aitkin County,MN,27,0
 27003,Anoka County,MN,27,109
 27005,Becker County,MN,27,0
@@ -1425,7 +1402,6 @@ countyFIPS,county,state,stateFIPS,total
 27169,Winona County,MN,27,15
 27171,Wright County,MN,27,5
 27173,Yellow Medicine County,MN,27,0
-0,Statewide Unallocated,MS,28,0
 28001,Adams County,MS,28,18
 28003,Alcorn County,MS,28,2
 28005,Amite County,MS,28,3
@@ -1508,7 +1484,6 @@ countyFIPS,county,state,stateFIPS,total
 28159,Winston County,MS,28,8
 28161,Yalobusha County,MS,28,7
 28163,Yazoo County,MS,28,6
-0,Statewide Unallocated,MO,29,0
 29001,Adair County,MO,29,0
 29003,Andrew County,MO,29,0
 29005,Atchison County,MO,29,0
@@ -1624,7 +1599,6 @@ countyFIPS,county,state,stateFIPS,total
 29227,Worth County,MO,29,0
 29229,Wright County,MO,29,0
 29510,City of St. Louis,MO,29,154
-0,Statewide Unallocated,MT,30,2
 30001,Beaverhead County,MT,30,0
 30003,Big Horn County,MT,30,4
 30005,Blaine County,MT,30,0
@@ -1681,7 +1655,6 @@ countyFIPS,county,state,stateFIPS,total
 30107,Wheatland County,MT,30,0
 30109,Wibaux County,MT,30,0
 30111,Yellowstone County,MT,30,4
-0,Statewide Unallocated,NE,31,1
 31001,Adams County,NE,31,11
 31003,Antelope County,NE,31,1
 31005,Arthur County,NE,31,0
@@ -1775,7 +1748,6 @@ countyFIPS,county,state,stateFIPS,total
 31181,Webster County,NE,31,0
 31183,Wheeler County,NE,31,0
 31185,York County,NE,31,0
-0,Statewide Unallocated,NV,32,0
 32001,Churchill County,NV,32,1
 32003,Clark County,NV,32,450
 32005,Douglas County,NV,32,0
@@ -1793,7 +1765,6 @@ countyFIPS,county,state,stateFIPS,total
 32031,Washoe County,NV,32,82
 32033,White Pine County,NV,32,0
 32510,Carson City,NV,32,5
-0,Statewide Unallocated,NH,33,0
 33001,Belknap County,NH,33,2
 33003,Carroll County,NH,33,0
 33005,Cheshire County,NH,33,2
@@ -1804,7 +1775,6 @@ countyFIPS,county,state,stateFIPS,total
 33015,Rockingham County,NH,33,92
 33017,Strafford County,NH,33,13
 33019,Sullivan County,NH,33,1
-0,Statewide Unallocated,NJ,34,0
 34001,Atlantic County,NJ,34,222
 34003,Bergen County,NJ,34,2009
 34005,Burlington County,NJ,34,438
@@ -1826,7 +1796,6 @@ countyFIPS,county,state,stateFIPS,total
 34037,Sussex County,NJ,34,193
 34039,Union County,NJ,34,1331
 34041,Warren County,NJ,34,162
-0,Statewide Unallocated,NM,35,0
 35001,Bernalillo County,NM,35,89
 35003,Catron County,NM,35,1
 35005,Chaves County,NM,35,2
@@ -1860,7 +1829,6 @@ countyFIPS,county,state,stateFIPS,total
 35057,Torrance County,NM,35,1
 35059,Union County,NM,35,0
 35061,Valencia County,NM,35,2
-0,Statewide Unallocated,NY,36,101
 1,New York City Unallocated/Probable,NY,36,37
 36001,Albany County,NY,36,109
 36003,Allegany County,NY,36,2
@@ -1924,7 +1892,6 @@ countyFIPS,county,state,stateFIPS,total
 36119,Westchester County,NY,36,1430
 36121,Wyoming County,NY,36,5
 36123,Yates County,NY,36,6
-0,Statewide Unallocated,NC,37,0
 37001,Alamance County,NC,37,37
 37003,Alexander County,NC,37,1
 37005,Alleghany County,NC,37,0
@@ -2025,7 +1992,6 @@ countyFIPS,county,state,stateFIPS,total
 37195,Wilson County,NC,37,23
 37197,Yadkin County,NC,37,5
 37199,Yancey County,NC,37,0
-0,Statewide Unallocated,ND,38,0
 38001,Adams County,ND,38,0
 38003,Barnes County,ND,38,0
 38005,Benson County,ND,38,0
@@ -2079,7 +2045,6 @@ countyFIPS,county,state,stateFIPS,total
 38101,Ward County,ND,38,1
 38103,Wells County,ND,38,0
 38105,Williams County,ND,38,0
-0,Statewide Unallocated,OH,39,0
 39001,Adams County,OH,39,1
 39003,Allen County,OH,39,41
 39005,Ashland County,OH,39,1
@@ -2168,7 +2133,6 @@ countyFIPS,county,state,stateFIPS,total
 39171,Williams County,OH,39,2
 39173,Wood County,OH,39,51
 39175,Wyandot County,OH,39,5
-0,Statewide Unallocated,OK,40,0
 40001,Adair County,OK,40,4
 40003,Alfalfa County,OK,40,0
 40005,Atoka County,OK,40,0
@@ -2246,7 +2210,6 @@ countyFIPS,county,state,stateFIPS,total
 40149,Washita County,OK,40,0
 40151,Woods County,OK,40,0
 40153,Woodward County,OK,40,0
-0,Statewide Unallocated,OR,41,0
 41001,Baker County,OR,41,0
 41003,Benton County,OR,41,5
 41005,Clackamas County,OR,41,25
@@ -2283,7 +2246,6 @@ countyFIPS,county,state,stateFIPS,total
 41067,Washington County,OR,41,20
 41069,Wheeler County,OR,41,0
 41071,Yamhill County,OR,41,9
-0,Statewide Unallocated,PA,42,0
 42001,Adams County,PA,42,13
 42003,Allegheny County,PA,42,190
 42005,Armstrong County,PA,42,6
@@ -2351,13 +2313,11 @@ countyFIPS,county,state,stateFIPS,total
 42129,Westmoreland County,PA,42,39
 42131,Wyoming County,PA,42,7
 42133,York County,PA,42,55
-0,Statewide Unallocated,RI,44,19
 44001,Bristol County,RI,44,15
 44003,Kent County,RI,44,97
 44005,Newport County,RI,44,4
 44007,Providence County,RI,44,773
 44009,Washington County,RI,44,61
-0,Statewide Unallocated,SC,45,0
 45001,Abbeville County,SC,45,1
 45003,Aiken County,SC,45,11
 45005,Allendale County,SC,45,3
@@ -2404,7 +2364,6 @@ countyFIPS,county,state,stateFIPS,total
 45087,Union County,SC,45,0
 45089,Williamsburg County,SC,45,15
 45091,York County,SC,45,12
-0,Statewide Unallocated,SD,46,0
 46003,Aurora County,SD,46,0
 46005,Beadle County,SD,46,7
 46007,Bennett County,SD,46,0
@@ -2471,7 +2430,6 @@ countyFIPS,county,state,stateFIPS,total
 46129,Walworth County,SD,46,0
 46135,Yankton County,SD,46,0
 46137,Ziebach County,SD,46,0
-0,Statewide Unallocated,TN,47,2
 47001,Anderson County,TN,47,2
 47003,Bedford County,TN,47,7
 47005,Benton County,TN,47,1
@@ -2567,7 +2525,6 @@ countyFIPS,county,state,stateFIPS,total
 47185,White County,TN,47,3
 47187,Williamson County,TN,47,15
 47189,Wilson County,TN,47,17
-0,Statewide Unallocated,TX,48,0
 48001,Anderson County,TX,48,2
 48003,Andrews County,TX,48,1
 48005,Angelina County,TX,48,9
@@ -2822,7 +2779,6 @@ countyFIPS,county,state,stateFIPS,total
 48503,Young County,TX,48,1
 48505,Zapata County,TX,48,0
 48507,Zavala County,TX,48,0
-0,Statewide Unallocated,UT,49,6
 49001,Beaver County,UT,49,0
 49003,Box Elder County,UT,49,1
 49005,Cache County,UT,49,2
@@ -2852,7 +2808,6 @@ countyFIPS,county,state,stateFIPS,total
 49053,Washington County,UT,49,5
 49055,Wayne County,UT,49,0
 49057,Weber County,UT,49,14
-0,Statewide Unallocated,VT,50,0
 50001,Addison County,VT,50,2
 50003,Bennington County,VT,50,1
 50005,Caledonia County,VT,50,0
@@ -2867,7 +2822,6 @@ countyFIPS,county,state,stateFIPS,total
 50023,Washington County,VT,50,1
 50025,Windham County,VT,50,3
 50027,Windsor County,VT,50,2
-0,Statewide Unallocated,VA,51,0
 51001,Accomack County,VA,51,14
 51003,Albemarle County,VA,51,10
 51005,Alleghany County,VA,51,2
@@ -3001,7 +2955,6 @@ countyFIPS,county,state,stateFIPS,total
 51820,Waynesboro city,VA,51,0
 51830,Williamsburg City,VA,51,6
 51840,Winchester city,VA,51,3
-0,Statewide Unallocated,WA,53,0
 53001,Adams County,WA,53,0
 53003,Asotin County,WA,53,2
 53005,Benton County,WA,53,88
@@ -3041,7 +2994,6 @@ countyFIPS,county,state,stateFIPS,total
 53073,Whatcom County,WA,53,41
 53075,Whitman County,WA,53,0
 53077,Yakima County,WA,53,168
-0,Statewide Unallocated,WV,54,0
 54001,Barbour County,WV,54,1
 54003,Berkeley County,WV,54,10
 54005,Boone County,WV,54,0
@@ -3097,7 +3049,6 @@ countyFIPS,county,state,stateFIPS,total
 54105,Wirt County,WV,54,0
 54107,Wood County,WV,54,2
 54109,Wyoming County,WV,54,0
-0,Statewide Unallocated,WI,55,0
 55001,Adams County,WI,55,2
 55003,Ashland County,WI,55,0
 55005,Barron County,WI,55,1
@@ -3170,7 +3121,6 @@ countyFIPS,county,state,stateFIPS,total
 55137,Waushara County,WI,55,0
 55139,Winnebago County,WI,55,13
 55141,Wood County,WI,55,1
-0,Statewide Unallocated,WY,56,0
 56001,Albany County,WY,56,0
 56003,Big Horn County,WY,56,0
 56005,Campbell County,WY,56,0
