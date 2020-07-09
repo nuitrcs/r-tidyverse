@@ -9,7 +9,7 @@ editor_options:
 
 ```{r, setup, include=FALSE}
 knitr::opts_chunk$set(
-  eval=FALSE
+  eval=FALSE, warning=FALSE, error=FALSE
 )
 ```
 
@@ -307,5 +307,7 @@ police %>%
 We've now covered the core dplyr functions: six "verbs" of common actions we may take with a data frame.  There are lots of helper functions, variations, and special cases that can come up when using these functions, but we've covered the essentials.  
 
 All of these functions were for working with a single data frame.  Next session we'll talk about dplyr functions that will help us combine two different data frames together.  
+
+To learn more about some issues in computing police bias statistics, see https://fivethirtyeight.com/features/why-statistics-dont-capture-the-full-extent-of-the-systemic-bias-in-policing/ or from Northwestern researchers Prof. Redbird and Kat Albrecht, https://redbird.shinyapps.io/police-bias-map/.  
 
 
