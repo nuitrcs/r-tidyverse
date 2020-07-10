@@ -1,0 +1,316 @@
+---
+title: 'ggplot: Quick Introduction'
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE, fig.width=5, fig.height=3.5)
+```
+
+
+The cheatsheet is very useful when working with ggplot2: https://www.rstudio.org/links/data_visualization_cheat_sheet
+
+
+# Setup
+
+```{r, warning=FALSE, error=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+```
+
+
+# Data
+
+We're using two data sets, one from a package, one built into R.
+
+You only need to do this once: install the remotes package (or you can substitute devtools if you have that), and then use that package to install the palmerpenguins package from GitHub.
+
+```{r, installpackages, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("allisonhorst/palmerpenguins")
+```
+
+If you have it installed, load it and look at the penguins data set:
+
+```{r}
+library(palmerpenguins)
+penguins
+```
+
+We're also going to use average yearly temperatures in New Hampshire, a data set built into R (`nhtemp`).  But we need to put it in a data frame first to make it easier to use (it's in a special time series object):
+
+```{r}
+nh <- data.frame(temp=c(nhtemp), year=1912:1971)
+nh
+```
+
+# Introductions
+
+Why ggplot?  For me, it makes exploring my data, especially groups in my data, much easier.  I can easily make some plots with ggplot that are difficult enough to make with base R graphics that I just won't do them routinely when exploring my data.  This is bad, because we should visualize our data!  I don't want the code to get in the way of that.  ggplot is a package where I recommend first learning the basic syntax, and then go back and learn some more about the theory behind the package -- what the logic is to how it works. It took me a few iterations of working with ggplot to get comfortable with it, and to understand how to think in a way that was compatible with how it approaches visualization.  But once I did, it made data visualization easier and more fun. 
+
+The syntax of ggplot2 is a little bit different than other tidyverse packages, in part because it predates them.  But it does share a few things with other tidyverse packages, such as:
+
+* It expects to work with a data frame, and the data frame is the first input
+* You can reference the names of columns without quotes or $ syntax
+* It's easy to work with groups in your data
+* Instead of functions with lots of different arguments (although some of these functions do have a lot), you combine multiple function calls together to achieve what you want to do
+
+The package is called ggplot2 (there is no first version), the main function in the package is called ggplot, and "ggplot" generally refers to anything with the package (I and others often don't bother to say the 2 in the package name).  
+
+# ggplot Basics
+
+Each plot with ggplot has the same template for the code:
+
+```{r, eval=FALSE}
+## call to ggplot and the name of the data frame
+ggplot(dataframename, 
+       ## which variables to use for which plot components 
+       aes(x = column_name, y = column_name)) +   
+  # what type of plot
+  geom_****()  
+```
+
+The first line says what data and variables to use, and the second line says what type of plot to make.  We add the components of the plot together, which is a somewhat unique syntax.  
+
+For example:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm)) + 
+  geom_point()
+```
+
+The warning message is telling you that two observations (rows) in your data frame are not plotted because there were missing values.  You can get this warning from explicit missing values or in cases where you set the limits of the axes in a way that excludes some data points.
+
+The first line alone (without the + at the end) makes a plot set up without adding the data:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm))
+```
+
+
+If we change the geom function we use, the plot type changes:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm)) + 
+  geom_bin2d()
+```
+
+This is a density plot, where the color of each rectangle indicates how many observations (points on the above plot) fall in that area.
+
+
+### EXERCISE
+
+Fill in the ___ to make a line plot using geom_line() with the nh data frame, with year as the x variable and temp as the y:
+
+```{r, eval=FALSE}
+ggplot(___, aes(x = ___, y=___)) + 
+  ___()
+```
+
+## Different Plot Types
+
+The above plots used two continuous variables.  The [cheat sheet](https://www.rstudio.org/links/data_visualization_cheat_sheet) has the geoms organized by how many and what type of variables you want to plot.  For example, we can make a histogram, which is of a single variable:
+
+```{r}
+ggplot(penguins, aes(x = bill_depth_mm)) + 
+  geom_histogram()
+```
+
+The warning message is how many bins (bars) there are in the histogram.  It defaults to 30, but it wants you to explicitly pick a number instead:
+
+```{r}
+ggplot(penguins, aes(x = bill_depth_mm)) + 
+  geom_histogram(bins = 25) 
+```
+
+We can also have multiple geoms on the same plot:
+
+```{r}
+ggplot(nh, aes(x=year, y=temp)) + 
+  geom_line() + 
+  geom_point()
+```
+
+```{r}
+ggplot(nh, aes(x=year, y=temp)) + 
+  geom_point() + 
+  geom_line() + 
+  geom_smooth()
+```
+
+
+### EXERCISE
+
+Make a histogram of the temp variable in the nh dataset
+
+```{r, eval=FALSE}
+
+```
+
+
+## Other Aesthetics and Grouping
+
+We can set other aesthetics of the plot (color, fill, linetype, marker, etc.) according to variables in our data.  
+
+With categorical varibles, this helps us see the groups in our data:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species)) +  
+  geom_point()
+```
+
+Note that a legend was added automatically.
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species)) +  
+  geom_point() + 
+  geom_smooth(method="lm", se=FALSE)
+```
+
+method=lm tells it how to fit a line to the data; lm means fit a linear model with the lm function.  se=FALSE means to not display the standard errors on the plot.
+
+Note that the smoothing was done by group.  Specifying color effectively grouped our data, much like what happens with group_by in dplyr.
+
+If we color by a continuous variable, we get a gradient, instead of individual colors:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = body_mass_g)) +  
+  geom_point() 
+```
+
+
+## Labels
+
+A convenient way to label is with the labs() function, added as a component of the plot:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species)) +  
+  geom_point() + 
+  labs(title="Penguin Bill Dimensions",
+       y="Depth (mm)", 
+       x="Length (mm)",
+       color="Body Mass",
+       subtitle="Three Species",
+       caption="Source: palmerpenguins")
+```
+
+### Exercise
+
+Plot flipper_length_mm vs. body_mass_g and color by sex.  Label your plot.
+
+```{r}
+
+```
+
+
+
+## Axis Limits
+
+To change the axes min and max values, like we would with xlim or ylim in base R graphics, we have to use a scale function:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm)) +  
+  geom_point() + 
+  scale_x_continuous(limits=c(30, 50))
+```
+
+
+
+## Facets
+
+In addition to using color, fill, linetype, etc. to denote groups, we can also make a separate plot for each group, where the plots are aligned and share axes.  These are called facets:
+
+```{r}
+ggplot(penguins, aes(flipper_length_mm)) + 
+  geom_histogram() + 
+  facet_grid(sex ~ .)
+```
+
+The facet function syntax is using the formula syntax used elsewhere in R, but it can be tough to remember.  It's on the cheat sheet though so you can look it up.  There are other options for laying out plots horizontally or in a grid.  
+
+Note that the plots share an x-axis, and the y-axis has the same range in each plot.
+
+If you want to put multiple plots in a single image together, but they are facets of a single plot, see the patchwork package.
+
+### Exercise
+
+Make a histogram (set a value for bins) of body_mass_g for each species:
+
+```{r, eval=FALSE}
+ggplot(penguins, aes(___)) + 
+  ___(___) + 
+  facet_grid(___ ~ .)
+```
+
+
+
+## Styling with Themes
+
+Themes control the look of the plot not related to the data: fonts, backgrounds, grid lines, axis lines, etc.
+
+There are some built-in themes (theme_minimal(), theme_bw(), theme_classic(), etc.), but you can also control the styling further with the theme() function:
+
+```{r}
+ggplot(penguins, aes(body_mass_g)) + 
+  geom_histogram() + 
+  theme_minimal()
+```
+
+For further control, use theme instead or in addition:
+
+```{r}
+ggplot(penguins, aes(body_mass_g)) + 
+  geom_histogram() + 
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank())
+```
+
+These are options that you will generally google for how to do: "ggplot remove gridlines", "ggplot change font size", etc.
+
+In addition to themes, you can control some aspects of the data-driven elements of the plot directly, without using a variable to define them.  For example with color or size, if we specify them outside of a call to aes() within the geom function:
+
+```{r}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = bill_depth_mm)) +  
+  geom_point(color="red", size=3) 
+```
+
+it colors all of the points the same color.  
+
+## Pipes
+
+We use +, not %>%, to join together components of our ggplot.  But we can still pipe the results of other commands into ggplot - I just didn't above because we were just plotting the data frame as it is.  For example, to plot only the Adelie penguins:
+
+```{r}
+penguins %>%
+  filter(species == "Adelie") %>%
+  ggplot(aes(x=bill_length_mm, y=bill_depth_mm)) + 
+  geom_point()
+```
+
+
+# Learn More
+
+The first chapter of R for Data Science https://r4ds.had.co.nz/ covers ggplot well.  
+
+For more on ggplot2, see [our guide](https://sites.northwestern.edu/researchcomputing/2020/04/13/online-learning-resources-r-ggplot2/) with free (for Northwestern folks) resources.
+
+We're happy to help you use ggplot on your own data.  Request a free consultation: https://www.it.northwestern.edu/research/consultation/data-services.html
