@@ -32,7 +32,7 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 * Session 1: Tidyverse basics, dplyr – select, filter, mutate.  [download](https://nuitrcs.github.io/r-tidyverse/01-intro.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/01-intro.html)  
 * Session 2: dplyr – group by, summarize, arrange, across.  [download](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/02-dplyr-group.html)        
 * Session 3: dplyr – joins - working with two data frames. [download](https://nuitrcs.github.io/r-tidyverse/03-dplyr-join.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/03-dplyr-join.html)   
-* Session 4: a quick intro to ggplot2.  
+* Session 4: a quick intro to ggplot2.  [download](https://nuitrcs.github.io/r-tidyverse/04-ggplot2.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/04-ggplot2.html)   
 * Session 5: tidyr – pivot_longer, pivot_wider, separate, separate_rows.  
 * Session 6: utility packages – stringr, lubridate, forcats, readxl.  
 
