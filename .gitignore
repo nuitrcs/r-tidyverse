@@ -22,3 +22,5 @@ data/*.r
 data/cc-*
 data/Race*
 
+*.pdf
+

@@ -1745,6 +1745,8 @@ ggplot(dataframename,
 <div id="other-aesthetics-and-grouping" class="section level2">
 <h2>Other Aesthetics and Grouping</h2>
 <p>We can set other aesthetics of the plot (color, fill, linetype, marker, etc.) according to variables in our data.</p>
+<p>Note that if you want a line or color for each group, those groups need to be defined by a categorical variable. This is the opposite of how data usually needs to be structured when using base R plotting functions. If the values for the two groups are in separate columns in your dataset, you’ll need to reshape your data to get them in a single column instead – something we’ll cover in the next session of these workshops.</p>
+<p>Each aesthetic – each thing you define in aes() – needs to be a single column in your data set.</p>
 <p>With categorical varibles, this helps us see the groups in our data:</p>
 <pre class="r"><code>ggplot(penguins, aes(x = bill_length_mm, 
                      y = bill_depth_mm,
