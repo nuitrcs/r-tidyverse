@@ -55,7 +55,7 @@ In this data set, each row (each observation) is a country-year.  Each column is
 
 There are situations though where we might want each row to be a different unit of observation.  We could make a really wide data set (one with lots of columns), where each row is a single country and there are columns for every measure in every year.  Or we could make a data set that's really long, where each row is a country-year-measure-age observation.  Or one that's in between, with each row being country-year-age, and there are columns for each measure.
 
-These different confugurations support different types of statistical models, data transformations, and data visualizations.  No configuration is necessarily the right one or better than the others in a vacuum - it depends on what you want to do with the data!
+These different configurations support different types of statistical models, data transformations, and data visualizations.  No configuration is necessarily the right one or better than the others in a vacuum - it depends on what you want to do with the data!
 
 # Pivot Longer
 
@@ -92,7 +92,7 @@ We want to get this data set to look like:
 
 Where each food is in a row by itself, and the column names have become encoded in a variable.
 
-To do this, we use the function `pivot_longer()` - in previous versions of tidyr, this function was called gather.  The syntax was similar, but the arguments had different names.  In base R, you can do similar transofrmations with the reshape function.
+To do this, we use the function `pivot_longer()` - in previous versions of tidyr, this function was called gather.  The syntax was similar, but the arguments had different names.  In base R, you can do similar transformations with the reshape function.
 
 Like other tidyverse functions, we'll start with the data frame name.  Then we'll select which we're going to collapse -- meaning there won't be columns with those names anymore because we'll stack the names and values on top of each other to make more rows.  Then we need to tell it what to name the new variable it will make that will have the column names in it (our new categorical variable), and a name as well for the new column that will have the values in it (the values that were in the columns originally).
 
@@ -172,7 +172,7 @@ pivot_longer(who2, -country:-year,
              names_pattern = "new_?(.+)_([mf])(\\d+)")  
 ```
 
-If the variable names had a simplier pattern, for example: year_measure, then we could use names_sep instead of the more complicated names_pattern to split up the column.
+If the variable names had a simpler pattern, for example: year_measure, then we could use names_sep instead of the more complicated names_pattern to split up the column.
 
 
 # Pivot Wider

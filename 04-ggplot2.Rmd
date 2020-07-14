@@ -164,7 +164,7 @@ Note that if you want a line or color for each group, those groups need to be de
 
 Each aesthetic -- each thing you define in aes() -- needs to be a single column in your data set.
 
-With categorical varibles, this helps us see the groups in our data:
+With categorical variables, this helps us see the groups in our data:
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, 
