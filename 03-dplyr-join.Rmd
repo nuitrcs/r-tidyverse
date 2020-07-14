@@ -194,7 +194,7 @@ left_join(cases, deaths)
 ```
 
 
-But it's best to be explicit about how you want to join the tables.
+But it's best to be explicit about how you want to join the tables.  Just because two columns have the same name, doesn't mean all of the data is the same!  In the case of the cases and deaths data frames, they come from the same source.  So all of these columns *SHOULD* match, but they don't!  For some reason, there are some typos in at least the county names column that result in rows not matching when you use all 4 columns that do match by FIPS code alone.  Something to always watch out for!  It's usually best to join using the minimal set of columns needed to identify the correct matches.  
 
 With the cases and deaths data frames, they came from the same data source, so the key column has the same name in both data sets.  In the demo data frame, the name of the column with the county FIPS code is different though:
 
@@ -210,21 +210,23 @@ left_join(cases, demo, by=c("countyFIPS"="fips"))
 
 Here, where the column names are different, it just keeps one copy of the joining key column, and uses the column name from the first (left) data set.  
 
-We can also join on multiple columns, where each pair of columns we specify needs to match.  For example, in the cases and deaths data, there are some of the same columns.  We can require all of them to match by supplying a vector of names:
+We can also join on multiple columns, where each pair of columns we specify needs to match.  For example, in the cases and deaths data, there are some of the same columns.  We can require multiple columns to match by supplying a vector of names:
 
 ```{r}
-left_join(cases, deaths, by=c("countyFIPS", "state", "county", "stateFIPS"))
+left_join(cases, deaths, by=c("countyFIPS", "state"))
 ```
 
 This gives us a cleaner result without duplicate rows.  But make sure that the values in these columns really should all match -- if not, you'll be missing matches.
 
 ### EXERCISE
 
-Join the cases data frame to the state_stats data frame using the state column in each (state in cases and State in state_stats);  case matters!  state is not equal to State.
+Join the cases data frame to the state_stats data frame using the state column in each (state in cases and State in state_stats);  case of the variable name matters!  ("state" is not equal to "State" as column names).
 
 ```{r}
 
+
 ```
+
 
 ## Unmatched Rows
 
@@ -233,17 +235,19 @@ A left join keeps all of the rows in the first data set, whether or not they mat
 Option 1: look for missing values in columns from the second data set. 
 
 ```{r}
-left_join(cases, deaths, 
-          by=c("countyFIPS", "state", "county", "stateFIPS")) %>%
-  filter(is.na(deaths))  ## deaths is the name of a column in the deaths data frame
+left_join(deaths, cases,
+          by=c("countyFIPS")) %>%
+  ## cases is the name of a column in the cases data frame
+  filter(is.na(cases))  
 ```
 
 This result is different than if we reverse the order that we join the data sets in:
 
 ```{r}
-left_join(deaths, cases, 
-          by=c("countyFIPS", "state", "county", "stateFIPS")) %>%
-  filter(is.na(cases))  ## cases is the name of a column in the cases data frame
+left_join(cases, deaths, 
+          by=c("countyFIPS")) %>%
+  # deaths is the name of a column in the deaths data frame
+  filter(is.na(deaths)) 
 ```
 
 But what if there are legitimately missing values in the column we want to check?
@@ -251,20 +255,27 @@ But what if there are legitimately missing values in the column we want to check
 Option 2: you can use anti_join() to find rows in one (the first) data frame that don't match to a row in the second:
 
 ```{r}
-anti_join(cases, deaths, 
-          by=c("countyFIPS", "state", "county", "stateFIPS")) 
+anti_join(deaths, cases, 
+          by=c("countyFIPS")) 
 ```
 
-This got us the same set of 15 rows as the first example above where we filtered by NA on a column.  Note that we don't get any columns from the deaths data frame because these are the rows from cases that don't match to deaths.  
+This got us the same set of rows as the first example above where we filtered by NA on a column.  Note that we don't get any columns from the cases data frame because these are the rows from deaths that don't match to cases  
+
 
 ### EXERCISE
 
 Find the rows in deaths that don't have a match in demo  Hint: join with deaths (countyFIPS) and demo (fips).
 
-```{r}
+To see what columns are in demo (if filtering by missing values):
 
+```{r}
+names(demo)
 ```
 
+```{r}
+
+
+```
 
 
 ## Beware Missing Values
@@ -280,6 +291,13 @@ b
 
 ```{r}
 left_join(a, b, by="id")
+```
+
+If we want this to not happen, we can set the `na_matches` argument to "never"
+
+```{r}
+left_join(a, b, by="id", 
+          na_matches="never")
 ```
 
 ## Cleanup
