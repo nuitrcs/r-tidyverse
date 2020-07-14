@@ -34,7 +34,7 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 * Session 3: dplyr – joins - working with two data frames. [download](https://nuitrcs.github.io/r-tidyverse/03-dplyr-join.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/03-dplyr-join.html)   
 * Session 4: a quick intro to ggplot2.  [download](https://nuitrcs.github.io/r-tidyverse/04-ggplot2.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/04-ggplot2.html)
 * Session 5: tidyr – pivot_longer, pivot_wider, separate, separate_rows.  [download](https://nuitrcs.github.io/r-tidyverse/05-tidyr.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/05-tidyr.html)
-* Session 6: utility packages – stringr, lubridate, forcats, readxl.  
+* Session 6: utility packages – stringr, lubridate, forcats, readxl.  [download](https://nuitrcs.github.io/r-tidyverse/06-others.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/06-others.html)
 
 ## Learning More
 

@@ -1,0 +1,347 @@
+---
+title: 'Other Tidyverse Packages'
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE)
+```
+
+*Note: some output from the code is not included here to keep the file size smaller.  Run the code to see the output.*
+
+# Setup
+
+Some packages installed by tidyverse don't load when you do library(tidyverse).  We'll load them explicitly:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(readxl)
+# stringr and forcats already loaded
+```
+
+List the tidyverse packages:
+
+```{r}
+tidyverse_packages()
+```
+
+
+While there are many utility packages that make working with a particular type of data easier, or solve a particular class of problem, today we'll look at just 4: readxl, lubridate, forcats, and stringr.  
+
+# readxl
+
+We'll start with the most straightforward.  readxl is for reading directly from Excel files -- no need to export to CSV first.
+
+Let's download the spreadsheet we'll use first.  Normally you'd have the file already on your computer, but for the workshop, this makes it easier for everyone to get it in the right location.  
+
+```{r, eval=FALSE}
+download.file("https://github.com/nuitrcs/r-tidyverse/raw/master/data/session6data.xlsx",
+              destfile = "session6data.xlsx")
+```
+
+You should now have a file called session6data.xlsx in your working directory.  
+
+Now, we can read it much like we'd read a CSV file.  By default, it will read the first sheet in the file, but we can specify the sheet by number or name. 
+
+```{r}
+registrations <- read_excel("session6data.xlsx",
+                            sheet="registrations")
+```
+
+If we look at registrations, you can see that, like read_csv, it read in dates to a date type directly and doesn't convert character data to factors:
+
+```{r}
+head(registrations)
+```
+
+
+
+# lubridate
+
+The first package for dealing with a specific data type we'll cover is lubridate, which is for working with dates and datetimes (dates plus a time component).  It has a series of functions that are named like:
+
+```{r, eval=FALSE}
+ymd()
+ymd_hms()
+dmy()
+dmy_h()
+mdy()
+```
+
+And so on, where y=year, m (in the first part)=month, d=day, h=hour, m (in the second part)=minute, s=second.  With the function name, you are specifying which parts of a date or time appear in the text you're converting and what order the different parts appear in.  You can ignore all of the delimiters and other components like dashes, slashes, or even no delimiter at all.  lubridate can handle most cases:
+
+```{r}
+mdy("1/13/2020","1/13/20", "01132020", "1-13-2020")
+```
+
+Without lubridate, you have to specify the format of the datetime object with POSIX standards (see the help page for strftime).  
+
+There are also functions for guessing the format of a datetime.  
+
+There are likewise functions for extracting the pieces of a date or datetime object:
+
+```{r}
+registrations %>%
+  select(date) %>%
+  mutate(day = day(date),
+         month = month(date),
+         monthname = month(date, label=TRUE),
+         hour = hour(date),
+         wday = wday(date, label=TRUE)) 
+```
+
+If you need just times, or additional time functions, see the package `hms`.  
+
+
+# forcats
+
+forcats is for working with factors -- categorical data.  I find it particularly useful in situations where I'm creating data visualizations, either plots or tables, containing categories because it has functions to collapse categories and reorder them.  Like lubridate, it doesn't do anything you can't do in other ways, but it makes things a bit easier and provides a consistent interface.  
+
+First, the package provides a method that will create a factor consistently across all systems: `as_factor()` (note the trend in tidyverse packages of replacing . in function names with _).  `as.factor()` (the base R function) will create factor levels by taking the unique values in the vector and then sorting them in order (alphabetical).  But the specific order depends on the locale (where you are in the world and the default language for your computer - alphabetical order isn't the same everywhere).  This can cause issues when sharing code with collaborators.  `as_factor()` creates levels in the order that values appear in the data.  So two different vectors with the same set of values could end up with different levels, but the behavior will be consistent across the world.  
+
+Long story short: it's best to just be explicit about factor levels when you make a factor regardless of which function you're using.
+
+```{r}
+as.factor(c("dog", "cat", "Cat", "mouse", "cat", "dog"))
+as_factor(c("dog", "cat", "Cat", "mouse", "cat", "dog"))
+```
+
+Ok, so getting out of the weeds, what can forcats help with?  
+
+What schools do workshop registrants come from?
+
+```{r}
+registrations %>%
+  count(school, sort=TRUE)
+```
+
+First, let's make the missing values a level of the factor, instead of NA.  This will let us count them and combine them with other categories:
+
+```{r}
+registrations <- mutate(registrations, 
+                        school = fct_explicit_na(school, na_level="Missing"))
+
+registrations %>%
+  count(school, sort=TRUE)
+```
+
+If I want to present this data, it can be useful to collapse some of the "other" categories.  While `fct_explicit_na()` above made school a factor already, I can start with a normal vector -- I don't have to factor it first.  
+
+I can collapse groups manually into an "Other" ("Other" is the default level name that is created):
+
+```{r}
+registrations %>%
+  mutate(school = fct_other(school, drop=c("Northwestern Medicine", "Missing",  
+                             "Central University Administration Unit (eg. NUIT)"))) %>%
+  count(school, sort=TRUE)
+```
+
+Or I can set a cut-off of how many times a level needs to appear:
+
+```{r}
+registrations %>%
+  mutate(school = fct_lump_min(school, 10)) %>%
+  count(school, sort=TRUE)
+```
+
+Or how many levels I want -- it will take the most frequent ones and lump the rest:
+
+```{r}
+registrations %>%
+  mutate(school = fct_lump_n(school, 6)) %>%
+  count(school, sort=TRUE)
+```
+
+There are other options as well.
+
+What if I make a plot of my data:
+
+```{r}
+registrations %>%
+  ggplot(aes(y=school)) + 
+  geom_bar(orientation="y") 
+```
+
+In addition to my labels being too long, this chart is hard to read because the bars aren't in any particular order.  Just counting the data first doesn't work.  ggplot puts categories by factor level, not value.
+
+```{r}
+# doesn't fix the ordering
+registrations %>%
+  count(school, sort=TRUE) %>%
+  ggplot(aes(y=school, x=n)) + 
+  geom_col()
+```
+
+So reorder our factor levels to reflect the frequency of each:
+
+```{r}
+registrations %>%
+  mutate(school=fct_infreq(school)) %>%
+  ggplot(aes(y=school)) + 
+  geom_bar(orientation="y")
+```
+
+Or we could reverse:
+
+```{r}
+registrations %>%
+  mutate(school=fct_rev(fct_infreq(school))) %>%
+  ggplot(aes(y=school)) + 
+  geom_bar(orientation="y")
+```
+
+You can reorder the levels by another variable as well, if you need an order other than the count.
+
+# stringr
+
+stringr is for finding, replacing, and extracting strings.  Again, it mostly gives a unified interface to various functions that exist in R elsewhere, but can be difficult to use or remember the syntax for.  These functions all take the string to operate on as the first input.
+
+There are functions for converting and cleaning up text data:
+
+```{r}
+str_to_lower("Christina Maimone")
+str_to_title("tidyverse workshop series")
+str_trim("   Christina ")  # remove whitespace beginning and end
+str_squish("tidyverse   workshop  series   ") # trim plus collapse interior spaces
+```
+
+There are functions for padding strings, which would have been useful when we were fixing zip codes in an earlier session:
+
+```{r}
+str_pad("8831", width=5, side="left", pad="0")
+```
+
+Then there are lots of functions to detect or replace substrings in a string.  These functions will take either a fixed string for comparison or a regular expression.  Regular expressions, or regex, are a way of writing patterns that match text.  We can't cover them all within this workshop, but they're well worth learning and will save you lots of time if you work with text at all.
+
+They default to interpreting the "pattern" input as a regex.  This doesn't make much difference if you're only searching for letters and spaces.  If you need to search for punctuation, you will likely want to tell it it's not a regex.  
+
+These functions all take the string to work on first, then the pattern to match/detect, then other options.  
+
+```{r}
+str_detect("Christina Maimone", "ma")
+
+# don't use a regex, and don't care about case
+str_detect("Christina Maimone", fixed("ma", ignore_case=TRUE))
+```
+
+`fixed()` is useful to tell it to make a literal match.  It's also how you tell it to do a case-insensitive match.  
+
+For example, a "." has special meaning in regular expressions (it matches any character), so if you want to match a literal period, `fixed()` is useful:
+
+```{r}
+str_detect(registrations$department, ".") 
+str_detect(registrations$department, fixed("."))
+```
+
+Matching to the beginning or end of the string:
+
+```{r}
+str_starts("Christina", "Ch")
+str_ends("Christina", "Ch")
+```
+
+You can also just get the elements of the vector that do match:
+
+```{r}
+str_subset(registrations$department, 
+            regex("pol.+sci.+", ignore_case=TRUE))
+```
+
+`regex()` is like `fixed()` but to be explicit that it is a regex.  The pattern string would get passed to regex, but if you want to ignore the case, you have to call it explicitly.  
+
+Replacing -- there is a version of each for replacing the first occurrence vs. all.
+
+First, just deleting:
+
+```{r}
+str_remove("Christina Maimone", "a")
+str_remove_all("Christina Maimone", "a")
+```
+
+Replacing with something new:
+
+```{r}
+str_replace("Christina Maimone", "a", "!")
+str_replace_all("Christina Maimone", "a", "!")
+```
+
+You can split a string, which can get complicated, because you get lists back, unless you know how many components to expect:
+
+```{r}
+str_split(registrations$department, " ") %>%
+  head()  # just print the first 6 elements
+```
+
+```{r}
+# here fixed means fixed number of components, not a fixed pattern as above
+str_split_fixed(registrations$department, " ", 3) %>%
+  head()  # just print the first 6 elements
+```
+
+And then there is pattern extraction and matching, which can also be complicated, especially if you want to extract all matches.  First, just the first match:
+
+```{r}
+# any part of the string that matches the pattern - first match only
+str_extract(registrations$department, 
+            regex("sciences?", ignore_case=TRUE))
+```
+
+All matches -- starts with an s followed by other "word characters" (letters, -).  You get a list back because there could be any number of matches, so one element of the list for each element in the input vector, and each list element is a vector of character data.
+
+```{r}
+str_extract_all(registrations$department, 
+            regex("s\\w+", ignore_case=TRUE)) %>%
+  head(10)
+```
+
+character(0) indicates no match -- it stands for an empty vector of type character.
+
+There are more matching functions as well, such as for capturing groups in regular expressions.  
+
+# The Other Tidyverse Packages
+
+The packages above are a few of the ones I use frequently.  But let's end with a look at what else is in the tidyverse metapackage:
+
+## Modeling
+
+broom: convers the output of statistical modeling functions into tibbles.  Useful if you want to run a lot of regression models, t-tests, etc. and save all of the output in a standardized format.  
+
+modelr: helps connect a workflow using dplyr with statistical modeling functions, such as lm, predict, etc.  I haven't seen it used much.  Tidymodeling packages are under development in a separate set of packages, see https://www.tidymodels.org/
+
+
+## Data Types
+
+hms: mentioned above, like lubridate but for time.
+
+jsonlite: for working with JSON data, which is a common result of API calls
+
+xml2: for working with XML data
+
+## Data Import/Interaction
+
+dbplyr: facilitates using dplyr functions directly with SQL databases, instead of having to write SQL queries yourself.
+
+haven: for reading in data sets from other statistical programs such as Stata and SAS.
+
+httr: for making web requests and working with URLs; used by rvest (below, for web scraping), or can be useful for calling APIs yourself
+
+rvest: for working with html files; we have a webscraping workshop with this package later this summer
+
+
+## Programming
+
+magrittr: this is the origin of %>% -- there are additional operators like this.
+
+purrr: supports functional programming, which is a particular approach to structuring code.  What you might use is the map family of functions which does what the apply family of functions does in base R, but like other tidyverse packages, purrr provides a consistent interface and naming conventions to hopefully make it easier to figure out which function you need and how to use it.  
+
+reprex: a small package to help you make reproducible examples from your code (minimal commands someone else can run to reproduce what you did) so you can post your code on help forums or in GitHub repos to get help, report a bug, etc.  
+
+
+## Others
+
+Packages that are primarily infrastructure for other tidyverse packages - you aren't likely to use them directly unless you're developing new packages: cli, crayon, pillar, rlang, rstudioapi
+
+Above are the packages that are installed as part of the "tidyverse" package, but there are many more packages within the tidyverse universe that work in similar ways and interact nicely with dplyr workflows.  
