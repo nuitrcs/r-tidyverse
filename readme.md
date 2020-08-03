@@ -1,21 +1,17 @@
 # Tidyverse Workshop Series
 
-These materials support a series of hour long interactive, virtual workshops on using packages that are part of the [tidyverse](https://www.tidyverse.org/) or use the programming approach of the tidyverse.
+These materials support a series of hour long interactive, virtual workshops on using packages that are part of the [tidyverse](https://www.tidyverse.org/).
 
 ## Before the Workshop
 
 ### Set up R and RStudio
 
-[Install R and RStudio](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/) on your own laptop (both are free).  If you can't install these programs or run into issues installing packages, [RStudio Cloud ](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/#option-2-rstudio-cloud) is a good option.
+[Install R and RStudio](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/) on your own laptop (both are free).  If you can't install these programs or run into issues installing packages, [RStudio Cloud](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/#option-2-rstudio-cloud)  is a good option.
 
-Also, install (or update) the tidyverse package.  Instructions are at the bottom of the [installation instructions page](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/).  If you run into installation issues (about 5-10% of you are likely to based on past workshops), you can send me an email at christina.maimone@northwestern.edu.
+Also, install (or update) the tidyverse package.  Instructions are at the bottom of the [installation instructions page](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/).  If you run into installation issues (about 5-10% of you are likely to based on past workshops), you (Northwestern folks) can send me an email at christina.maimone@northwestern.edu.
 
 I will be using tidyverse version 1.3.0 and R version 4.0.2 in the workshop.  You will want to update the tidyverse packages to have the most recent version, as they do make notable changes between releases.
 
-
-### Get Materials
-
-I will email an R Markdown (notebook) file to registered participants before each session.  You can also download the materials from this repository (individual links below).
 
 ## Materials
 
@@ -27,7 +23,7 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 
 ### Links
 
-*Download links should prompt you to save the linked .Rmd file, but behavior may vary across browsers.* You can always [download this entire  repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead.
+*Download links should prompt you to save the linked .Rmd file, but behavior may vary across browsers.* You can always [download this entire repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead.
 
 * Session 1: Tidyverse basics, dplyr – select, filter, mutate.  [download](https://nuitrcs.github.io/r-tidyverse/01-intro.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/01-intro.html)  
 * Session 2: dplyr – group by, summarize, arrange, across.  [download](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/02-dplyr-group.html)        
