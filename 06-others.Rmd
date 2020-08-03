@@ -3,6 +3,7 @@ title: 'Other Tidyverse Packages'
 output:
   html_document:
     df_print: paged
+    code_download: TRUE
 ---
 
 ```{r, setup, include=FALSE}

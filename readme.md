@@ -23,14 +23,14 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 
 ### Links
 
-*Download links should prompt you to save the linked .Rmd file, but behavior may vary across browsers.* You can always [download this entire repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead.
+Links for each session will show the rendered html file.  There is a button in the upper right of each file to download the .Rmd file to work with in RStudio yourself. Or [download this entire repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead to get the .Rmd files for all sessions.
 
-* Session 1: Tidyverse basics, dplyr – select, filter, mutate.  [download](https://nuitrcs.github.io/r-tidyverse/01-intro.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/01-intro.html)  
-* Session 2: dplyr – group by, summarize, arrange, across.  [download](https://nuitrcs.github.io/r-tidyverse/02-dplyr-group.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/02-dplyr-group.html)        
-* Session 3: dplyr – joins - working with two data frames. [download](https://nuitrcs.github.io/r-tidyverse/03-dplyr-join.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/03-dplyr-join.html)   
-* Session 4: a quick intro to ggplot2.  [download](https://nuitrcs.github.io/r-tidyverse/04-ggplot2.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/04-ggplot2.html)
-* Session 5: tidyr – pivot_longer, pivot_wider, separate, separate_rows.  [download](https://nuitrcs.github.io/r-tidyverse/05-tidyr.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/05-tidyr.html)
-* Session 6: utility packages – stringr, lubridate, forcats, readxl.  [download](https://nuitrcs.github.io/r-tidyverse/06-others.Rmd) | [view](https://nuitrcs.github.io/r-tidyverse/html/06-others.html)
+* [Session 1](https://nuitrcs.github.io/r-tidyverse/html/01-intro.html): Tidyverse basics, dplyr – select, filter, mutate
+* [Session 2](https://nuitrcs.github.io/r-tidyverse/html/02-dplyr-group.html): dplyr – group by, summarize, arrange, across    
+* [Session 3](https://nuitrcs.github.io/r-tidyverse/html/03-dplyr-join.html): dplyr – joins - working with two data frames
+* [Session 4](https://nuitrcs.github.io/r-tidyverse/html/04-ggplot2.html): a quick intro to ggplot2
+* [Session 5](https://nuitrcs.github.io/r-tidyverse/html/05-tidyr.html): tidyr – pivot_longer, pivot_wider, separate, separate_rows
+* [Session 6](https://nuitrcs.github.io/r-tidyverse/html/06-others.html): utility packages – stringr, lubridate, forcats, readxl
 
 ## Learning More
 
