@@ -15,7 +15,7 @@ knitr::opts_chunk$set(eval=TRUE)
 
 Some packages installed by tidyverse don't load when you do library(tidyverse).  We'll load them explicitly:
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, error=FALSE, message=FALSE}
 library(tidyverse)
 library(lubridate)
 library(readxl)
@@ -74,7 +74,7 @@ mdy()
 And so on, where y=year, m (in the first part)=month, d=day, h=hour, m (in the second part)=minute, s=second.  With the function name, you are specifying which parts of a date or time appear in the text you're converting and what order the different parts appear in.  You can ignore all of the delimiters and other components like dashes, slashes, or even no delimiter at all.  lubridate can handle most cases:
 
 ```{r}
-mdy("1/13/2020","1/13/20", "01132020", "1-13-2020")
+mdy("1/13/2020","1/13/20", "01132020", "1-13-2020", "Jan 13 2020", "Jan. 13, 2020") 
 ```
 
 Without lubridate, you have to specify the format of the datetime object with POSIX standards (see the help page for strftime).  
@@ -92,6 +92,12 @@ registrations %>%
          hour = hour(date),
          wday = wday(date, label=TRUE)) 
 ```
+
+```{r}
+round_date(today(), "month")
+floor_date(today(), "month")
+```
+
 
 If you need just times, or additional time functions, see the package `hms`.  
 
@@ -201,9 +207,11 @@ stringr is for finding, replacing, and extracting strings.  Again, it mostly giv
 
 There are functions for converting and cleaning up text data:
 
-```{r}
+```{r} 
+# tolower()
 str_to_lower("Christina Maimone")
 str_to_title("tidyverse workshop series")
+str_to_title("PhD")
 str_trim("   Christina ")  # remove whitespace beginning and end
 str_squish("tidyverse   workshop  series   ") # trim plus collapse interior spaces
 ```
@@ -278,7 +286,7 @@ str_split(registrations$department, " ") %>%
 ```{r}
 # here fixed means fixed number of components, not a fixed pattern as above
 str_split_fixed(registrations$department, " ", 3) %>%
-  head()  # just print the first 6 elements
+  head(20)  # just print the first 20 elements
 ```
 
 And then there is pattern extraction and matching, which can also be complicated, especially if you want to extract all matches.  First, just the first match:
@@ -307,7 +315,7 @@ The packages above are a few of the ones I use frequently.  But let's end with a
 
 ## Modeling
 
-broom: convers the output of statistical modeling functions into tibbles.  Useful if you want to run a lot of regression models, t-tests, etc. and save all of the output in a standardized format.  
+broom: converts the output of statistical modeling functions into tibbles.  Useful if you want to run a lot of regression models, t-tests, etc. and save all of the output in a standardized format.  
 
 modelr: helps connect a workflow using dplyr with statistical modeling functions, such as lm, predict, etc.  I haven't seen it used much.  Tidymodeling packages are under development in a separate set of packages, see https://www.tidymodels.org/
 

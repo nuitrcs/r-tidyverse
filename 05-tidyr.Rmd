@@ -78,7 +78,7 @@ foods
 We want to get this data set to look like:
 
 ```
-    id category food     
+    id category item     
      1 a        apple    
      1 b        banana   
      1 c        cod      
@@ -107,6 +107,9 @@ pivot_longer(foods,
 
 The id column has values duplicated, once for each of the original 3 columns that we collapsed.
 
+
+
+
 ### EXERCISE
 
 Pivot the pops data frame below to be in a longer format, with rows for each country-year.
@@ -116,7 +119,6 @@ pops <- tribble(~country,  ~year2011,  ~year2012,  ~year2013,
                 "Brazil",  196935134, 198656019, 200361925,
                 "Germany",  82892904,  82800121,  82726626,
                 "Kenya",    42027891,  43178141,  44353691)
-
 
 ```
 
