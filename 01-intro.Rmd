@@ -4,16 +4,21 @@ output:
   html_document:
     df_print: paged
     code_download: TRUE
+    toc: true
+    toc_depth: 2
 editor_options:
   chunk_output_type: inline
 
 ---
 
 ```{r, setup, include=FALSE}
+# you don't need to run this when working in RStudio
 knitr::opts_chunk$set(eval=FALSE)  # when making the html version of this file, don't execute the code
 ```
 
 *The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+This is an [R Markdown](https://rmarkdown.rstudio.com/) document.  Follow the link to learn more about R Markdown and the notebook format used during the workshop.
 
 # Setup
 
@@ -23,7 +28,7 @@ library(tidyverse)
 
 This gives you info on which packages it actually loaded, because when you install tidyverse, it installs ~25 packages, but it only loads the ones listed.  Tidyverse packages also tend to be verbose in warning you when there are functions with the same name in multiple packages.
 
-## Background
+# Background
 
 Tidyverse packages do a few things:
 
@@ -41,7 +46,7 @@ Tidyverse packages are particularly useful for:
 * cleaning up different types of data
 * reading and writing data
 
-## Data
+# Data
 
 Let's grab the data we'll be using.  We're going to use the `read_csv` function from the `readr` package, which is part of the tidyvere.
 
@@ -83,7 +88,7 @@ police[, 1]
 as.data.frame(police)[, 1]
 ```
 
-Tibbles are also stricter about name matching, there are some utility functions to help create them manually, and they essentially ignore row names.  
+Tibbles are also stricter about name matching,  and they essentially ignore row names.  
 
 
 # dplyr
@@ -94,7 +99,13 @@ Each of these function takes a data frame as the first input.  Within the functi
 
 ## Select: Choose Columns
 
-The select function is for selecting which columns to keep (or exclude) from the data set:
+The `select` function is for selecting which columns to keep (or exclude) from the data set.  First, let's remember what the column names are:
+
+```{r}
+names(police)
+```
+
+Now, let's select just "date" and "outcome" from `police` tibble (data frame):
 
 ```{r}
 select(police, date, outcome)
@@ -108,7 +119,9 @@ We can name all of the columns we want, like above.  We can also say which colum
 select(police, -raw_row_number, -subject_age)
 ```
 
-As with [] indexing, columns will be returned in the order specified:
+When using negated `-` column names, it will include all other columns by default.
+
+As with `[]` indexing, columns will be returned in the order specified:
 
 ```{r}
 select(police, subject_sex, subject_race, date)
@@ -161,17 +174,17 @@ select(police, -contains("subject"))
 ```
 
 
-And there are even more helper functions.  
+And there are even more [helper functions](https://tidyselect.r-lib.org/reference/select_helpers.html).  
 
 ### EXERCISE
 
-Use `select()` to get a copy of police without the columns that start with "raw".
+Use `select()` to get a copy of `police` without the columns that start with "raw".
 
 ```{r}
 
 ```
 
-Hint: If you mess something up, re-run the cell near the top of the file and read the data in again fresh.
+Hint: If you mess up your `police` dataset, re-run the cell near the top of the file under the Data header and read the data in again fresh.
 
 ### Renaming
 
@@ -197,22 +210,34 @@ police <- rename(police, raw_id=raw_row_number)
 
 ## Filter: Choose Rows
 
-The `filter()` function lets us choose which rows of data to keep.  Takes the data frame name first, and then any expression that will return a vector of TRUE and FALSE values that is the same length as the number of rows in the data frame.
+The `filter()` function lets us choose which rows of data to keep.  Takes the data frame name first, and then any expression that will return a vector of `TRUE` and `FALSE` values that is the same length as the number of rows in the data frame.
 
 ```{r}
 filter(police, date == "2017-01-02")
 ```
 
-We can do complex conditions as we could do with []
+We can do complex conditions as we could do with `[]`
 
 ```{r}
 filter(police, subject_race == "hispanic" & subject_sex == "female")
 ```
 
+If we include multiple comma-separated conditions, they are joined with `&` and.  So this following is equivalent to the above.
+
+```{r}
+filter(police, subject_race == "hispanic", subject_sex == "female")
+```
+
 
 ### EXERCISE
 
-Filter to choose the rows where location is not 60201 or 60202 (hint: `!=` is the not equals operator, or you could use `!` in combination with `%in%`.
+Filter to choose the rows where location is not 60201 or 60202.
+
+Hints:
+
+* Think: Not 60201 and not 60202
+* `!=` is the not equals operator, or you could use `!` in combination with `%in%`
+* The "or" operator is `|`; the "and" operator is `&`
 
 ```{r}
 
@@ -221,7 +246,9 @@ Filter to choose the rows where location is not 60201 or 60202 (hint: `!=` is th
 
 ## Pipe: Chaining Commands Together
 
-So, we can choose rows and choose columns separately; how do we combine these operations?  dplyr, and other tidyverse, commands can be strung together is a series with a `%>%` (say: pipe) operator.  It works like a bash pipe character `|`.  It takes the output of the command on the left and makes that the first input to the command on the right.
+So, we can choose rows and choose columns separately; how do we combine these operations?  `dplyr`, and other tidyverse, commands can be strung together is a series with a `%>%` (say/read: pipe) operator.  If you are familiar with working in a terminal/at the command line, it works like a bash pipe character `|`.  It takes the output of the command on the left and makes that the first input to the command on the right. 
+
+This works because the functions all take a data frame as the first input, and they return a data frame as the output.  
 
 We can rewrite 
 
@@ -242,7 +269,7 @@ police %>%
   select(date, time)
 ```
 
-The pipe comes from a package called magrittr, which has additional special operators in it that you can use.  The keyboard shortcut for %>% is command-shift-M (Mac) or control-shift-M (Windows).
+The pipe comes from a package called `magrittr`, which has additional special operators in it that you can use.  The keyboard shortcut for `%>%` is command-shift-M (Mac) or control-shift-M (Windows).
 
 We can use the pipe to string together multiple commands operating on the same data frame:
 
@@ -280,7 +307,7 @@ table(police$subject_race) %>% sort()
 
 ### EXERCISE
 
-Select the date, time, and outcome (columns) of stops that occur in beat 71 (rows).  Hint: remember that a column needs to still be in the data frame if you're going to use it to filter.
+Select the date, time, and outcome (columns) of stops that occur in beat 71 (rows).  Hint: remember that a column needs to still be in the data frame if you're going to use the column to filter.
 
 ```{r}
 
@@ -323,7 +350,7 @@ police %>%
   filter(startsWith(location, "0"))  # selecting a few rows to look at the change
 ```
 
-Remember that when using `mutate()`, you're operating on the entire column at once, so you can't select just a subset of the vector as you would with [].  This means more frequently using functions like `ifelse()` or helper functions such as `na_if()`, `replace_na()`, or `recode()`.  
+Remember that when using `mutate()`, you're operating on the entire column at once, so you can't select just a subset of the vector as you would with `[]`.  This means more frequently using functions like `ifelse()` or helper functions such as `na_if()`, `replace_na()`, or `recode()`.  
 
 ```{r}
 mutate(police, vehicle_make = na_if(vehicle_make, "UNK"))
@@ -332,9 +359,9 @@ mutate(police, vehicle_make = na_if(vehicle_make, "UNK"))
 
 ### EXERCISE
 
-If beat is / or CHICAGO, set it to NA instead using `mutate()`.  
+If beat is "/" or "CHICAGO", set it to `NA` instead using `mutate()`.  
 
-Hint: if you use `na_if()`, it only can check and replace one value at a time, so you'd need to use it twice.  With `ifelse()` you can write an expression like (`beat == '/' | beat == 'CHICAGO'`) or (`beat %in% c('/', 'CHICAGO')`) for the first input (the TRUE/FALSE test).  
+Hint: if you use `na_if()`, it only can check and replace one value at a time, so you'd need to use it twice (which is OK!).  With `ifelse()` you can write an expression like (`beat == '/' | beat == 'CHICAGO'`) or (`beat %in% c('/', 'CHICAGO')`) for the first input (the TRUE/FALSE test).  
 
 ```{r}
 
