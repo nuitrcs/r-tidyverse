@@ -4,6 +4,8 @@ output:
   html_document:
     df_print: paged
     code_download: TRUE
+    toc: true
+    toc_depth: 1
 editor_options:
   chunk_output_type: inline
   
@@ -16,6 +18,8 @@ knitr::opts_chunk$set(
 ```
 
 *The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+This is an [R Markdown](https://rmarkdown.rstudio.com/) document.  Follow the link to learn more about R Markdown and the notebook format used during the workshop.
 
 # Setup
 
@@ -37,7 +41,7 @@ police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_
 
 # Summarize
 
-We'll start with `summarize()` (or `summarise()`).  We use `mutate()` when we want the output to have the same length as the input -- when we're operating on individual elements in a vector.  When we want to condense multiple values down to a single (or a few values), such as taking the mean or standard deviation of a vector), we use summarize instead.
+We'll start with `summarize()` (or `summarise()`).  We use `mutate()` when we want the output to have the same length as the input -- when we're operating on the individual elements in a vector - we want a value for every row in the data.  When we want to condense multiple values down to a single (or a few values), such as taking the mean or standard deviation of a vector), we use summarize instead.
 
 ```{r}
 police %>% 
@@ -72,7 +76,7 @@ We get one column per summary variable we create.  Once we group below, we'll se
 
 ## EXERCISE
 
-Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function (`count = n()`).
+Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function (hint: if naming the output "count", `count = n()`).
 
 ```{r}
 
@@ -85,12 +89,20 @@ If we want to apply the same summary functions to multiple columns in our data f
 
 Let's use the `n_distinct()` function to count the number of distinct values in each column.  This will help us see which columns don't have useful information because everything is the same.
 
-`across()` selects columns using any syntax you could give to `select()` directly.  We'll use `everything()` here to select all columns.
+`across()` selects columns using the helper functions you could give to `select()` directly.  We'll use `everything()` here to select all columns.
 
 ```{r}
 police %>%
   summarize(across(everything(), n_distinct))
 ```
+
+If you wanted to select columns using their names, put them in a vector (so it's a single input argument):
+
+```{r}
+police %>%
+  summarize(across(c(date, time, location, beat, subject_age), n_distinct))
+```
+
 
 If we want to apply multiple functions:
 
@@ -174,6 +186,25 @@ police %>%
 
 Now we get one row for each group, and one column for each summary measure.
 
+The warning message `summarise() ungrouping output (override with .groups argument)` is telling us that using `summarize()` undid the `group_by()` that we did before it.  This is what we want to happen.  The message is just part of tidyverse being it's typically verbose self.  To make the warning message not appear, for a singe command, set the .groups option:
+
+```{r}
+police %>% 
+  mutate(vehicle_age = 2017-vehicle_year) %>%
+  group_by(subject_sex) %>%
+  summarize(mean_vehicle_age = mean(vehicle_age),
+            sd_vehicle_age = sd(vehicle_age),
+            .groups="drop_last")  # this is the default option for .groups for this situation 
+```
+
+Or set the option `dplyr.summarise.inform` to `FALSE` at the beginning of your script to turn it off:
+
+```{r}
+options(dplyr.summarise.inform=FALSE)
+```
+
+
+
 We can group by multiple columns:
 
 ```{r}
@@ -184,7 +215,7 @@ police %>%
             sd_vehicle_age = sd(vehicle_age))
 ```
 
-Let's compute the ratio of warnings to citations by subject_race:
+Let's compute the ratio of warnings to citations by subject_race - note that we can use the variables we create in later expressions within the same call to `summarize()`:
 
 ```{r}
 police %>%
@@ -229,6 +260,16 @@ police %>%
   slice(1)
 ```
 
+If you look at this output in the console, you'll see the resulting tibble still has groups in it.  This is a case where you might want to ungroup:
+
+```{r}
+police %>%
+  select(outcome, everything()) %>%  # to reorder columns for output
+  group_by(outcome) %>%
+  slice(1) %>%
+  ungroup()
+```
+
 
 
 
@@ -246,8 +287,10 @@ To sort in reverse order, wrap the column name in `desc()`.
 arrange(police, desc(date))
 ```
 
+Arrange by multiple columns, in order:
+
 ```{r}
-arrange(police, desc(date), desc(time))
+arrange(police, date, desc(time))
 ```
 
 An example where it matters: compute time between stops in the dataset:
@@ -272,7 +315,7 @@ Sort the data by vehicle_make and then vehicle_year.
 
 # Count
 
-A bonus function that I use frequently: `count()`.  It's how you make tables with dplyr.
+A bonus function that I use frequently: `count()`.  It's how you'd get output similar to `table()`
 
 By itself, it counts the number of rows:
 
