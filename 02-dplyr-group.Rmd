@@ -132,9 +132,20 @@ na_count <- function(x) {
   sum(is.na(x))
 }
 
+# Example for a single vector:
+na_count(police$subject_age)
+
+# use summarize and across to apply this function to every column
 police %>%
   summarize(across(___, ___))
 ```
+
+This is similar to using the `apply()` function in base R:
+
+```{r}
+apply(police, 2, na_count)
+```
+
 
 Instead of creating the function ahead of time, we could define it as part of the summarize call.  We use `.x` to stand in for each column, and we put `~` in front of the expression to singal we're creating a function in place (lambda function). 
 
@@ -344,6 +355,15 @@ You can group by multiple columns directly with count:
 ```{r}
 police %>%
   count(subject_sex, subject_race)
+```
+
+
+## EXERCISE
+
+How many times does each type of violation appear in the dataset?  Bonus: sort the results from most to least frequent.  You can do this with `arrange()` or look at the documentation for `count()` to find another option.
+
+```{r}
+
 ```
 
 
