@@ -4,6 +4,8 @@ output:
   html_document:
     df_print: paged
     code_download: TRUE
+    toc: true
+    toc_depth: 2
 editor_options:
   chunk_output_type: console
 ---
@@ -12,6 +14,7 @@ editor_options:
 knitr::opts_chunk$set(eval=TRUE, fig.width=5, fig.height=3.5)
 ```
 
+This is an [R Markdown](https://rmarkdown.rstudio.com/) document.  Follow the link to learn more about R Markdown and the notebook format used during the workshop.
 
 The cheatsheet is very useful when working with ggplot2: https://www.rstudio.org/links/data_visualization_cheat_sheet
 
@@ -32,8 +35,7 @@ We're using two data sets, one from a package, one built into R.
 You only need to do this once: install the remotes package (or you can substitute devtools if you have that), and then use that package to install the palmerpenguins package from GitHub.
 
 ```{r, installpackages, eval=FALSE}
-install.packages("remotes")
-remotes::install_github("allisonhorst/palmerpenguins")
+install.packages("allisonhorst/palmerpenguins")
 ```
 
 If you have it installed, load it and look at the penguins data set:
@@ -109,10 +111,10 @@ This is a density plot, where the color of each rectangle indicates how many obs
 
 ### EXERCISE
 
-Fill in the ___ to make a line plot using geom_line() with the nh data frame, with year as the x variable and temp as the y:
+Fill in the `___` to make a line plot using `geom_line()` with the `nh` data frame, with `year` as the x variable and `temp` as the y:
 
 ```{r, eval=FALSE}
-ggplot(___, aes(x = ___, y=___)) + 
+ggplot(___, aes(x = ___, y = ___)) + 
   ___()
 ```
 
@@ -150,7 +152,7 @@ ggplot(nh, aes(x=year, y=temp)) +
 
 ### EXERCISE
 
-Make a histogram of the temp variable in the nh dataset
+Make a histogram (`geom_histogram()`) of the `temp` variable in the `nh` dataset
 
 ```{r, eval=FALSE}
 
@@ -184,9 +186,9 @@ ggplot(penguins, aes(x = bill_length_mm,
   geom_smooth(method="lm", se=FALSE)
 ```
 
-method=lm tells it how to fit a line to the data; lm means fit a linear model with the lm function.  se=FALSE means to not display the standard errors on the plot.
+`method=lm` tells it how to fit a line to the data; "lm" means fit a linear model with the `lm` function.  `se=FALSE` means to not display the standard errors on the plot.
 
-Note that the smoothing was done by group.  Specifying color effectively grouped our data, much like what happens with group_by in dplyr.
+Note that the smoothing was done by group.  Specifying `color` effectively grouped our data, much like what happens with `group_by` in dplyr.
 
 If we color by a continuous variable, we get a gradient, instead of individual colors:
 
@@ -198,9 +200,9 @@ ggplot(penguins, aes(x = bill_length_mm,
 ```
 
 
-## Labels
+## Labels/Titles
 
-A convenient way to label is with the labs() function, added as a component of the plot:
+A convenient way to label axes and legends and set the title is with the labs() function, added as a component of the plot:
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, 
@@ -215,9 +217,9 @@ ggplot(penguins, aes(x = bill_length_mm,
        caption="Source: palmerpenguins")
 ```
 
-### Exercise
+### EXERCISE
 
-Plot flipper_length_mm vs. body_mass_g and color by sex.  Label your plot.
+Plot `flipper_length_mm` vs. `body_mass_g` and color by `sex`.  Label the axes and title your plot.
 
 ```{r}
 
@@ -227,7 +229,7 @@ Plot flipper_length_mm vs. body_mass_g and color by sex.  Label your plot.
 
 ## Axis Limits
 
-To change the axes min and max values, like we would with xlim or ylim in base R graphics, we have to use a scale function:
+To change the axes min and max values, like we would with `xlim` or `ylim` in base R graphics, we have to use a scale function and set the `limits` argument:
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, 
@@ -252,11 +254,11 @@ The facet function syntax is using the formula syntax used elsewhere in R, but i
 
 Note that the plots share an x-axis, and the y-axis has the same range in each plot.
 
-If you want to put multiple plots in a single image together, but they are facets of a single plot, see the patchwork package.
+If you want to put multiple plots in a single image together, but they are not facets of a single plot, see the patchwork package.
 
-### Exercise
+### EXERCISE
 
-Make a histogram (set a value for bins) of body_mass_g for each species:
+Make a histogram (set a value for bins) of `body_mass_g` for each `species`:
 
 ```{r, eval=FALSE}
 ggplot(penguins, aes(___)) + 
@@ -270,7 +272,7 @@ ggplot(penguins, aes(___)) +
 
 Themes control the look of the plot not related to the data: fonts, backgrounds, grid lines, axis lines, etc.
 
-There are some built-in themes (theme_minimal(), theme_bw(), theme_classic(), etc.), but you can also control the styling further with the theme() function:
+There are some built-in themes (`theme_minimal()`, `theme_bw()`, `theme_classic()`, etc.), but you can also control the styling further with the `theme()` function:
 
 ```{r}
 ggplot(penguins, aes(body_mass_g)) + 
@@ -278,19 +280,19 @@ ggplot(penguins, aes(body_mass_g)) +
   theme_minimal()
 ```
 
-For further control, use theme instead or in addition:
+For further control, use `theme` instead or in addition:
 
 ```{r}
 ggplot(penguins, aes(body_mass_g)) + 
   geom_histogram() + 
   theme_minimal() + 
-  theme(panel.grid.major.x = element_blank(),
+  theme(panel.grid.major.x = element_blank(),  # get rid of the vertical grid lines
         panel.grid.minor.x = element_blank())
 ```
 
 These are options that you will generally google for how to do: "ggplot remove gridlines", "ggplot change font size", etc.
 
-In addition to themes, you can control some aspects of the data-driven elements of the plot directly, without using a variable to define them.  For example with color or size, if we specify them outside of a call to aes() within the geom function:
+In addition to themes, you can control some aspects of the data-driven elements of the plot directly, without using a variable to define them.  For example with color or size, if we specify them outside of a call to `aes()` within the geom function:
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, 

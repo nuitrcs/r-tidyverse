@@ -4,6 +4,8 @@ output:
   html_document:
     df_print: paged
     code_download: TRUE
+    toc: true
+    toc_depth: 2
 editor_options:
   chunk_output_type: inline
 ---
@@ -15,6 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 *The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+This is an [R Markdown](https://rmarkdown.rstudio.com/) document.  Follow the link to learn more about R Markdown and the notebook format used during the workshop.
 
 # Setup
 
@@ -80,7 +84,7 @@ We have some overlap in the column names, but the set of columns doesn't match e
 bind_rows(delaware, hawaii)
 ```
 
-bind_rows includes all columns the exist in either dataset and fills in missing values with NA.  It matches columns by full name.  If we tried this with rbind, we'd get an error, because the set of columns doesn't match.  
+`bind_rows` includes all columns the exist in either dataset and fills in missing values with NA.  It matches columns by full name.  If we tried this with `rbind`, we'd get an error, because the set of columns doesn't match.  
 
 When would you really do this? Maybe you have separate data files for each year of data, and you need to combine them.  Or for each school, or state, or experiment iteration.  Any case where the set of variables is similar across multiple data sets that all have the same unit of observation (rows are the same type of thing across data sets and you have similar variables).  
 
@@ -103,7 +107,7 @@ For example, here, we have three county datasets, all of which have different da
 # I'm applying (with lapply) the nrow function to each element of a list, 
 # where each element is one of our data frames
 # Again, this is just for easy printing together in the notebook
-lapply(list(demo, cases, deaths), nrow)
+lapply(list(demo=demo, cases=cases, deaths=deaths), nrow)
 ```
 
 We have a key that will link rows in the different datasets together.  
@@ -151,8 +155,8 @@ Today, we're assuming there is some clean key to match on where values match exa
 There are different ways to match up rows in two datasets.  They vary based on what happens to rows that don't match to the other data set (where the key from one data set isn't present in the other).  
 
 
-```{r, eval=TRUE}
-knitr::include_graphics("https://documentation.mindsphere.io/resources/html/predictive-learning/en-US/Joins_Diagram.png")
+```{r, eval=TRUE, echo=FALSE}
+knitr::include_graphics("data/Joins_Diagram.png")
 ```
 
 Image source: https://documentation.mindsphere.io/resources/html/predictive-learning/en-US/Joins_Diagram.png
@@ -175,9 +179,9 @@ Let's start with the first example above.  I'm going to re-write it in a single 
 left_join(cases, deaths, by="countyFIPS")
 ```
 
-The first input, cases, is the "left" table.  The second, deaths, is the "right." The `by="countyFIPS"` is telling it what key to use to join -- in this case, there's a column named countyFIPS in both data frames that should be used to match up rows.   
+The first input, cases, is the "left" table.  The second, deaths, is the "right." The `by="countyFIPS"` is telling it what key to use to join -- in this case, there's a column named "countyFIPS" in both data frames that should be used to match up rows.   
 
-In the output, it adds the suffix .x to any columns from the first data set where there's a column of the same name in the second data set, and uses the suffix .y for the reverse.  countyFIPS doesn't get a suffix because it's the variable we told it to join on.  cases and deaths don't get a suffix because there isn't a column with those names in the other data set.  
+In the output, it adds the suffix ".x" to any columns from the first data set where there's a column of the same name in the second data set, and uses the suffix ".y" for the reverse.  "countyFIPS" doesn't get a suffix because it's the variable we told it to join on.  "cases" and "deaths" don't get a suffix because there isn't a column with those names in the other data set.  
 
 Note above and also below, I'm just joining and printing the resulting data frame.  You could save the output (the resulting data frame) in a new variable though:
 
@@ -195,15 +199,15 @@ left_join(cases, deaths)
 ```
 
 
-But it's best to be explicit about how you want to join the tables.  Just because two columns have the same name, doesn't mean all of the data is the same!  In the case of the cases and deaths data frames, they come from the same source.  So all of these columns *SHOULD* match, but they don't!  For some reason, there are some typos in at least the county names column that result in rows not matching when you use all 4 columns that do match by FIPS code alone.  Something to always watch out for!  It's usually best to join using the minimal set of columns needed to identify the correct matches.  
+But it's best to be explicit about how you want to join the tables.  Just because two columns have the same name, doesn't mean all of the data is the same!  In the case of the `cases` and `deaths` data frames, they come from the same source.  So all of these columns *SHOULD* match, but they don't!  For some reason, there are some typos in at least the county names column that result in rows not matching when you use all 4 columns that do match by FIPS code alone.  Something to always watch out for!  It's usually best to join using the minimal set of columns needed to identify the correct matches.  
 
-With the cases and deaths data frames, they came from the same data source, so the key column has the same name in both data sets.  In the demo data frame, the name of the column with the county FIPS code is different though:
+With the `cases` and `deaths` data frames, they came from the same data source, so the key column has the same name in both data sets.  In the `demo` data frame, the name of the column with the county FIPS code is different though:
 
 ```{r}
 names(demo)
 ```
 
-To join with that, we use a named vector with `by`, with the form "Name in first data set"="Name in second data set":
+To join with that, we use a named vector with `by`, with the form `c("Name in first data set"="Name in second data set")`:
 
 ```{r}
 left_join(cases, demo, by=c("countyFIPS"="fips"))
@@ -221,7 +225,7 @@ This gives us a cleaner result without duplicate rows.  But make sure that the v
 
 ### EXERCISE
 
-Join the cases data frame to the state_stats data frame using the state column in each (state in cases and State in state_stats);  case of the variable name matters!  ("state" is not equal to "State" as column names).
+Join (`left_join` is fine) the `cases` data frame to the `state_stats` data frame using the state column in each ("state" in `cases` and "State" in `state_stats`);  case of the variable name matters!  ("state" is not equal to "State" as column names).
 
 ```{r}
 
@@ -253,25 +257,21 @@ left_join(cases, deaths,
 
 But what if there are legitimately missing values in the column we want to check?
 
-Option 2: you can use anti_join() to find rows in one (the first) data frame that don't match to a row in the second:
+Option 2: you can use `anti_join()` to find rows in one (the first) data frame that don't match to a row in the second:
 
 ```{r}
 anti_join(deaths, cases, 
           by=c("countyFIPS")) 
 ```
 
-This got us the same set of rows as the first example above where we filtered by NA on a column.  Note that we don't get any columns from the cases data frame because these are the rows from deaths that don't match to cases  
+This got us the same set of rows as the first example above where we filtered by NA on a column.  Note that we don't get any columns from the `cases` data frame because these are the rows from `deaths` that don't match to cases  
 
 
 ### EXERCISE
 
-Find the rows in deaths that don't have a match in demo  Hint: join with deaths (countyFIPS) and demo (fips).
+Find the rows in `deaths` that don't have a match in `demo`  Hint: join with `deaths` (column "countyFIPS") and `demo` (column "fips").
 
-To see what columns are in demo (if filtering by missing values):
-
-```{r}
-names(demo)
-```
+Remember, if you want to see what columns are in a data frame, use `names()` - example: `names(demo)`
 
 ```{r}
 
@@ -281,7 +281,7 @@ names(demo)
 
 ## Beware Missing Values
 
-Missing values: by default, dplyr matches missing (NA) as if it is a value.  So if we have two data frames, and there are missing values in our key id variables, then they will match, even if there are multiple NAs.
+Missing values: by default, dplyr matches missing (`NA`) as if it is a value.  So if we have two data frames, and there are missing values in our key id variables, then they will match, even if there are multiple `NA`s.
 
 ```{r}
 a <- tibble(id=c(1, 2, NA), val=c(10, 20, 30))
@@ -303,7 +303,7 @@ left_join(a, b, by="id",
 
 ## Cleanup
 
-So you've joined two data sets, and now you have a bunch of columns with .x and .y (or other types of repeats).  What do you do?
+So you've joined two data sets, and now you have a bunch of columns with ".x" and ".y" (or other types of repeats).  What do you do?
 
 Option 1: select only the columns you really want in the result ahead of doing the join.  NOTE: this is one of the very few times I might nest dplyr function calls
 
@@ -314,8 +314,20 @@ cases %>%
             by=c("countyFIPS"="fips"))
 ```
 
+Why nest the `select` call instead of saving a subset of the data first, and using that?  Mostly for situations where the datasets are large, and I don't want extra copies of the data frame in my environment.  In this case, the data sets are small enough that I could do this instead:
 
-Option 2: use rename() or select() on the result of the join:
+```{r}
+demo_sub <- select(demo, fips, total, white, black)
+
+cases %>%
+  select(countyFIPS, county, state, cases) %>%
+  left_join(demo_sub,
+            by=c("countyFIPS"="fips"))
+```
+
+But I have `demo_sub` hanging around in my environment then (I like to keep my environment clean when possible!).
+
+Option 2: use `rename()` or `select()` on the result of the join:
 
 ```{r}
 cases %>%
@@ -323,6 +335,17 @@ cases %>%
             by=c("countyFIPS"="fips")) %>%
   select(countyFIPS, county=county.x, state=state.x, 
          cases, total, white, black)
+```
+
+
+### EXERCISE
+
+Create a data frame with only the following columns: countyFIPS, state, deaths, non_white population
+
+Hint: use the `demo` and `deaths` data frames.
+
+```{r}
+
 ```
 
 

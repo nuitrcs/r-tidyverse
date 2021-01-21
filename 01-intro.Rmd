@@ -231,12 +231,11 @@ filter(police, subject_race == "hispanic", subject_sex == "female")
 
 ### EXERCISE
 
-Filter to choose the rows where location is not 60201 or 60202.
+1. Filter `police` to choose the rows where location is 60201 or 60202
+2. Filter `police` to choose the rows where location is 60201 or 60202 and subject_sex is "male"
 
 Hints:
 
-* Think: Not 60201 and not 60202
-* `!=` is the not equals operator, or you could use `!` in combination with `%in%`
 * The "or" operator is `|`; the "and" operator is `&`
 
 ```{r}
