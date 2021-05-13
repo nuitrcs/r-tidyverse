@@ -35,7 +35,7 @@ We're using two data sets, one from a package, one built into R.
 You only need to do this once: install the remotes package (or you can substitute devtools if you have that), and then use that package to install the palmerpenguins package from GitHub.
 
 ```{r, installpackages, eval=FALSE}
-install.packages("allisonhorst/palmerpenguins")
+install.packages("palmerpenguins")
 ```
 
 If you have it installed, load it and look at the penguins data set:
@@ -163,7 +163,7 @@ Make a histogram (`geom_histogram()`) of the `temp` variable in the `nh` dataset
 
 We can set other aesthetics of the plot (color, fill, linetype, marker, etc.) according to variables in our data.  
 
-Note that if you want a line or color for each group, those groups need to be defined by a categorical variable.  This is the opposite of how data usually needs to be structured when using base R plotting functions. If the values for the two groups are in separate columns in your dataset, you'll need to reshape your data to get them in a single column instead -- something we'll cover in the next session of these workshops.
+Note that if you want a line or color for each group, those groups need to be defined by a categorical variable.  This is the opposite of how data usually needs to be structured when using base R plotting functions. If the values for the two groups are in separate columns in your dataset, you'll need to reshape your data to get them in a single column instead -- something covered in the tidyr session of these workshops.
 
 Each aesthetic -- each thing you define in aes() -- needs to be a single column in your data set.
 
@@ -304,7 +304,7 @@ it colors all of the points the same color.
 
 ## Pipes
 
-We use +, not %>%, to join together components of our ggplot.  But we can still pipe the results of other commands into ggplot - I just didn't above because we were just plotting the data frame as it is.  For example, to plot only the Adelie penguins:
+We use `+`, not `%>%`, to join together components of our ggplot.  But we can still pipe the results of other commands into ggplot - I just didn't above because we were just plotting the data frame as it is.  For example, to plot only the Adelie penguins:
 
 ```{r}
 penguins %>%
