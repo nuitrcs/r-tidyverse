@@ -7,8 +7,8 @@ output:
     toc: true
     toc_depth: 1
 editor_options:
-  chunk_output_type: inline
   
+  chunk_output_type: inline
 ---
 
 ```{r, setup, include=FALSE}
@@ -147,7 +147,7 @@ apply(police, 2, na_count)
 ```
 
 
-Instead of creating the function ahead of time, we could define it as part of the summarize call.  We use `.x` to stand in for each column, and we put `~` in front of the expression to singal we're creating a function in place (lambda function). 
+Instead of creating the function ahead of time, we could define it as part of the summarize call.  We use `.x` to stand in for each column, and we put `~` in front of the expression to signal we're creating a function in place (lambda function). 
 
 ```{r}
 police %>%

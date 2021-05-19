@@ -15,7 +15,6 @@
 .Ruserdata
 .Rproj.user/
 
-answers/*
 
 data/covid_*
 data/*.r

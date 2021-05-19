@@ -1,5 +1,5 @@
 ---
-title: "Tidyverse and dplyr basics"
+title: "Tidyverse basics"
 output:
   html_document:
     df_print: paged
@@ -8,7 +8,6 @@ output:
     toc_depth: 2
 editor_options:
   chunk_output_type: inline
-
 ---
 
 ```{r, setup, include=FALSE}
@@ -48,26 +47,62 @@ Tidyverse packages are particularly useful for:
 
 # Data
 
-Let's grab the data we'll be using.  We're going to use the `read_csv` function from the `readr` package, which is part of the tidyvere.
+Let's import the data we'll be using.  The data is from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) and includes vehicle stops by the Evanston police in 2017.  We're reading the data in from a URL directly.  
 
-The data is from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) and includes vehicle stops by the Evanston police in 2017.  
+We're going to use the `read_csv` function from the `readr` package, which is part of the tidyverse.  The `read_csv` function works like `read.csv` except is has some different defaults, guesses data types a bit differently, and produces a tibble instead of a normal data frame (details coming).  
 
-We're reading from a URL directly, which is something you can do with `read_csv` or base R function `read.csv`.  
+```{r, eval=TRUE}
+police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv")
+```
+
+The output message that you get tells you want data type it guessed for each column based on the format of the information.  `col_double()` means numeric data.  `col_logical()` means boolean TRUE/FALSE values.  Note that it also automatically read and identified date and time values and converted them to date and time objects -- not just string/character data.    
+
+At the bottom of the output, it also tells you about any problems it encountered: when if found a value that doesn't match what it thinks is the data type for the column.  When it guesses the data type for each column, it only uses the first 1000 rows by default. 
+
+In this case, all of these parsing failures are in the same column: "beat".  If we look at what type it read in "beat" as above, it says `col_double()`, which is a numeric type.  And if we look at the initial values of this variable, it does look numeric:
+
+```{r}
+police$beat[1:10]
+```
+
+
+For values that can't be automatically converted to the column type, it fills in missing.  Look at row 1015, one of the rows with a parsing error:
+
+```{r}
+police[1015, "beat"]
+```
+
+Sometimes, we might be OK with having these values go to missing.  But we can also manually specify column types for cases where the assumption that `read_csv` makes is wrong.  We use the `col_types` argument (similar to colClasses for `read.csv`).  Let's make the "beat" column character data, since while the beats do have numbers, we wouldn't want to treat the values as numeric anyway (e.g. we wouldn't average the beat). While we're at it, let's also make location to be character data, since it is zip codes.
+
 
 ```{r, eval=TRUE}
 police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv",
-                   col_types=c("beat"="c"))
+                   col_types=c("beat"="c", "location"="c"))
 ```
 
-The `read_csv` function works like `read.csv` except is has some different defaults, guesses data types a bit differently, and produces a tibble instead of a normal data frame (details coming).  
+One way to specify `col_types` is with a named vector, where the name is the name of the column ("beat") and the value is the type of the data: "c" is short for "c"haracter data.  
 
-The `col_types` argument functions like colClasses for `read.csv` -- it allows us to say which type of data is in a particular column instead of having the function just guess and determine the type for us.  Here we're saying that the column named "beat" has "c"haracter type data in it.  By default, the function will think it's numeric data, because most of the values are numbers, including all of the first 1000 rows that the function uses by default to guess what type of data is in each column.  
+This time we don't get any parsing errors.
 
-One of the big other differences, which was relevant before R version 4.0 came out this year, is that `read_csv` does not import text data as factors, while `read.csv` had `stringAsFactors=FALSE` by default prior to R 4.0.  
+### EXERCISE
+
+Remember: you need to have loaded tidyverse, so execute the cells above.
+
+We have a dataset that includes [ISO two-letter country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).  The country code for Namibia is NA, so we don't want to read "NA" in as missing.
+
+Look at the documentation (help) page for `read_csv`.  You can open it by typing `?read_csv` in the console.  The `na` argument determines what values are imported as missing `NA`.  
+
+Change the code below so that **only** empty strings "" and "N/A" values are imported as missing.  Look at `fix_data` after importing so you can check the values.
+
+```{r}
+fix_data <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/missing.csv")
+fix_data
+```
+
 
 # Tibbles
 
-Tibbles are the tidyverse version of a data frame.  You can use them as you would a data frame (they are one), but they behave in slightly different ways.
+You may have noticed above that `read_csv` imported the data as something called a Tibble.  Tibbles are the tidyverse version of a data frame.  You can use them as you would a data frame (they are one), but they behave in slightly different ways.
 
 ```{r, eval=TRUE}
 police
@@ -81,45 +116,41 @@ To view the dataset, use `View()`:
 View(police)
 ```
 
-When using [] notation to subset them, they will always return a tibble.  In constrast, data frames sometimes return a data frame and sometimes return just a vector.
+When using [] notation to subset them, they will always return a tibble.  In contrast, data frames sometimes return a data frame and sometimes return just a vector.
 
 ```{r}
 police[, 1]
 as.data.frame(police)[, 1]
 ```
 
-Tibbles are also stricter about name matching,  and they essentially ignore row names.  
-
-
 # dplyr
 
-dplyr is at the core of the tidyverse.  It is for working with data frames.  It contains six main functions, each a verb, of actions you frequently take with a data frame.  We're covering 3 of those functions today (select, filter, mutate), and 3 more next week (group_by, summarize, arrange).
+dplyr is the core package of the tidyverse.  It includes functions for working with tibbles (or any data frames).  While you can still use base R operations on tibbles/data frames, such as using `$` and `[]` subsetting like we did above, dplyr provides alternatives to all of the common data manipulation tasks.
 
-Each of these function takes a data frame as the first input.  Within the function call, we can refer to the column names without quotes and without $ notation.
+Here, we're just going to look at the basics of subsetting data to get a feel for how tidyverse functions typically work.   Next session, we'll get into variations on subsetting data and some other dplyr functions.
 
-## Select: Choose Columns
-
-The `select` function is for selecting which columns to keep (or exclude) from the data set.  First, let's remember what the column names are:
+Before we start, let's remember what columns are in our data:
 
 ```{r}
 names(police)
 ```
 
-Now, let's select just "date" and "outcome" from `police` tibble (data frame):
+
+## select
+
+The `select()` function lets us choose which columns (or variables) we want to keep in our data.
+
+The data frame is the first input, and the name of the column is the second.  We do not have to put quotes around the column name.  
 
 ```{r}
-select(police, date, outcome)
+select(police, subject_race)
 ```
 
-The first input is the name of a data frame.  Then we can list one or more columns that we want to select after that, comma separated.  Notice there are no quotes around the column names, and we don't need to preface the names with anything (similar to what we do with the formula syntax in base R).  
-
-We can name all of the columns we want, like above.  We can also say which columns we don't want by putting a `-` in front of the name:
+If we want to select additional columns, we can just list the column names as additional inputs, each column name separated by commas:
 
 ```{r}
-select(police, -raw_row_number, -subject_age)
+select(police, subject_race, outcome)
 ```
-
-When using negated `-` column names, it will include all other columns by default.
 
 As with `[]` indexing, columns will be returned in the order specified:
 
@@ -127,121 +158,79 @@ As with `[]` indexing, columns will be returned in the order specified:
 select(police, subject_sex, subject_race, date)
 ```
 
-We could also use the column index number if we wanted to instead.  We don't need to put the values in `c()` like we would with [] (but we could).
+
+We could also use the column index number if we wanted to instead.  We don't need to put the values in `c()` like we would with `[]` (but we could).
 
 ```{r}
 select(police, 1, 4, 10)
 ```
 
-There are a number of select helper functions and special syntax options that allow us to choose what columns we want to keep.
-
-First, we can use : for range, but with names in addition to numbers:
-
-```{r}
-select(police, raw_DriverRace:raw_ResultOfStop)
-```
-
-We can select the rightmost columns with `last_col()`:
-
-```{r}
-select(police, last_col())
-```
-
-Last 4 columns (the input to the function is the offset # of columns from the right edge):
-
-```{r}
-select(police, last_col(0:3))
-```
-
-We can also select by matching patterns in the names of the columns:
-
-```{r}
-select(police, starts_with("raw"))
-```
-
-```{r}
-select(police, ends_with("issued"))
-```
-
-```{r}
-select(police, contains("vehicle"))
-```
-
-We can also put a `-` in front of these helper functions to exclude columns:
-
-```{r}
-select(police, -contains("subject"))
-```
-
-
-And there are even more [helper functions](https://tidyselect.r-lib.org/reference/select_helpers.html).  
+Yes, there are other ways to specify which columns you want.  We'll cover those next session.  
 
 ### EXERCISE
 
-Use `select()` to get a copy of `police` without the columns that start with "raw".
+Remember: you need to have loaded tidyverse, and the police data, so execute the cells above.
+
+Convert this base R expression: `police[,c("violation", "citation_issued", "warning_issued")]` to use `select()` instead to do the same thing: 
 
 ```{r}
 
 ```
 
-Hint: If you mess up your `police` dataset, re-run the cell near the top of the file under the Data header and read the data in again fresh.
 
-### Renaming
 
-We can also rename columns while using `select()`.  The syntax is `new_name = old_name`.
+## filter
+
+To choose which rows should remain in our data, we use `filter()`.  As with `[]`, we write expressions that evaluate to TRUE or FALSE for each row.  Like `select()`, we can use the column names without quotes.
+
 
 ```{r}
-select(police, raw_id=raw_row_number, date, time)
+filter(police, location == "60202")
 ```
 
-
-or we can use `rename()` to only rename, without affecting which columns are included:
+Note that we use `==` to test for equality and get TRUE/FALSE output.  You can also write more complicated expressions -- anything that will evaluate to a vector of TRUE/FALSE values.
 
 ```{r}
-rename(police, raw_id=raw_row_number)
+filter(police, is.na(beat))
 ```
 
-This doesn't change police because we didn't save the result.  So far, we've just been printing the copy of the data frame that is returned by the function.  If we want to change our data frame, we'd need to save the result back to the `police` object.
+Variables (columns) that are already logical (TRUE/FALSE values), can be used to filter:
 
 ```{r}
-police <- rename(police, raw_id=raw_row_number)
-```
-
-
-## Filter: Choose Rows
-
-The `filter()` function lets us choose which rows of data to keep.  Takes the data frame name first, and then any expression that will return a vector of `TRUE` and `FALSE` values that is the same length as the number of rows in the data frame.
-
-```{r}
-filter(police, date == "2017-01-02")
-```
-
-We can do complex conditions as we could do with `[]`
-
-```{r}
-filter(police, subject_race == "hispanic" & subject_sex == "female")
-```
-
-If we include multiple comma-separated conditions, they are joined with `&` and.  So this following is equivalent to the above.
-
-```{r}
-filter(police, subject_race == "hispanic", subject_sex == "female")
+filter(police, contraband_found)
 ```
 
 
 ### EXERCISE
 
-1. Filter `police` to choose the rows where location is 60201 or 60202
-2. Filter `police` to choose the rows where location is 60201 or 60202 and subject_sex is "male"
+Use `filter()` to choose the rows where subject_race is "white".  
 
-Hints:
-
-* The "or" operator is `|`; the "and" operator is `&`
+The equivalent base R expression would be `police[police$subject_race == "white",]`.  
 
 ```{r}
 
 ```
 
+
+## slice
+
+Unlike `select()`, we can't use row numbers to index which rows we want with filter.  This gives an error:
+
+```{r}
+filter(police, 10)
+```
+
+If we did need to use the row index (row number) to select which rows we want, we can use the `slice()` function.  
+
+```{r}
+slice(police, 10)
+```
+
+```{r}
+slice(police, 10:15)
+```
+
+We don't usually use `slice()` in this way when working with dplyr.  This is because we ideally want to be working with well-structured data, where we can reorder the rows without losing information.  If reordering the rows in the dataset would result in a loss of information (it would mess up your data), then the dataset is missing an important variable -- maybe just a sequence index.  You should always be able to use a variable to order the data if needed.
 
 ## Pipe: Chaining Commands Together
 
@@ -261,7 +250,7 @@ as
 police %>% select(date, time)
 ```
 
-and you'll often see code formatted, so `%>%` is at the end of each line:
+and you'll often see code formatted, so `%>%` is at the end of each line, and the following line that are still part of the same expression are indented:
 
 ```{r}
 police %>%
@@ -280,6 +269,8 @@ police %>%
 
 We would read the `%>%` in the command above as "then" if reading the code outloud: from police, select subject_race and subject_sex, then filter where subject_race is white.
 
+This works because the dplyr functions take a tibble/data frame as the first argument (input) and return a tibble/data frame as the output.  This makes it easy to pass a data frame through multiple operations, changing it one step at a time.  
+
 Order does matter, as the commands are executed in order.  So this would give us an error:
 
 ```{r}
@@ -288,7 +279,7 @@ police %>%
   filter(subject_race == "white")
 ```
 
-Because `subject_race` is no longer in the data frame once we try to filter on it.  We'd have to reverse the order:
+Because `subject_race` is no longer in the data frame once we try to filter with it.  We'd have to reverse the order:
 
 ```{r}
 police %>%
@@ -296,78 +287,52 @@ police %>%
   select(subject_sex, outcome)
 ```
 
-You can use the pipe operator to string together commands outside of the tidyverse as well:
+You can use the pipe operator to string together commands outside of the tidyverse as well, and it works with any input and output, not just data frames:
 
 ```{r}
-# sort(table(police$subject_race)) becomes: 
-table(police$subject_race) %>% sort()
+# sum(is.na(police$beat))
+is.na(police$beat) %>% sum()
 ```
 
 
 ### EXERCISE
 
-Select the date, time, and outcome (columns) of stops that occur in beat 71 (rows).  Hint: remember that a column needs to still be in the data frame if you're going to use the column to filter.
+Select the date, time, and outcome (columns) of stops that occur in beat "71" (rows).  Make use of the `%>%` operator.  
+
+The equivalent base R expression would be: `police[police$beat == "71", c("date", "time", "outcome")]`
+
+Hint: remember that a column needs to still be in the data frame if you're going to use the column to filter.
 
 ```{r}
 
 ```
 
 
+Note that so far, we haven't actually changed the `police` data frame at all.  We've written expressions to give us output, but we haven't saved it.  
 
-## Mutate: Change or Create Columns
-
-`mutate()` is used to both change the values of an existing column and make a new column.  
-
-```{r}
-mutate(police, vehicle_age = 2017 - vehicle_year) %>%
-  select(starts_with("vehicle"))
-```
-
-Within a call to mutate, we can refer to variables we made or changed earlier in the same call as well.  Here, we create vehicle_age, and then use it to create vehicle_age_norm:
+Sometimes we may still want to save the result of some expression, such as after performing a bunch of data cleaning steps. We can assign the output of piped commands as we would with any other expression.
 
 ```{r}
-police %>% 
-  mutate(vehicle_age = 2017 - vehicle_year, 
-         vehicle_age_norm = ifelse(vehicle_age < 0, 0, vehicle_age)) %>%
-  select(starts_with("vehicle")) %>%
-  filter(vehicle_age < 0)
+police60201 <- police %>%
+  select(date, time, beat, type, outcome) %>%
+  filter(location == "60201")
 ```
 
-Side note: there is a tidyverse version of `ifelse()` called `if_else()` that works generally the same except it is stricter about checking data types.
-
-`mutate()` can also change an existing column.  The location column in the data contains zip codes, that were read in as numeric values.  This means the leading zero on some zip codes has been lost.  Convert location to character data, and add back in the leading 0 if it should be there.
-
-Here I'll change the location column twice in the same call with two different transformations:
-
-```{r}
-police %>%
-  mutate(location = as.character(location),  # first convert to character, then recode below
-         location = ifelse(nchar(location) == 4,  # ifelse test (vector of TRUE and FALSE)
-                           paste0("0", location), # value if TRUE
-                           location)) %>%  # value if FALSE
-  select(location) %>%  # selecting just the column we mutated to look at
-  filter(startsWith(location, "0"))  # selecting a few rows to look at the change
-```
-
-Remember that when using `mutate()`, you're operating on the entire column at once, so you can't select just a subset of the vector as you would with `[]`.  This means more frequently using functions like `ifelse()` or helper functions such as `na_if()`, `replace_na()`, or `recode()`.  
-
-```{r}
-mutate(police, vehicle_make = na_if(vehicle_make, "UNK"))
-```
 
 
 ### EXERCISE
 
-If beat is "/" or "CHICAGO", set it to `NA` instead using `mutate()`.  
-
-Hint: if you use `na_if()`, it only can check and replace one value at a time, so you'd need to use it twice (which is OK!).  With `ifelse()` you can write an expression like (`beat == '/' | beat == 'CHICAGO'`) or (`beat %in% c('/', 'CHICAGO')`) for the first input (the TRUE/FALSE test).  
+Select only vehicle_year and vehicle_make columns for observations where there were contraband_weapons
 
 ```{r}
 
 ```
+
 
 # Recap
 
-We learned the dplyr equivalents of indexing and subsetting a data frame, of creating new variables in our data frame, and of recoding variables in our data frame.  We also learned about the pipe `%>%` operator, and what tibbles are.
+We learned what tibbles are, the dplyr equivalents of indexing and subsetting a data frame, and the pipe `%>%` operator.
 
-Next week: the three other common dplyr "verb" functions for working with data frames: group_by, summarize, and arrange.  
+Next time we're going to look at some more complicated use cases for `select`, `filter`, and `slice`, as well as learn `mutate` to create or change variables in our datasets.  
+
+
