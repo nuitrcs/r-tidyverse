@@ -1,0 +1,364 @@
+---
+title: 'Regular Expressions with stringr'
+output:
+  html_document:
+    df_print: paged
+    code_download: TRUE
+    toc: true
+    toc_depth: 2
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r, setup, include=FALSE}
+# you don't need to run this when working in RStudio
+knitr::opts_chunk$set(eval=FALSE)  # when making the html version of this file, don't execute the code
+```
+
+*The output of most of the R chunks isn't included in the HTML version of the file to keep it to a more reasonable file size.  You can run the code in R to see the output.*
+
+This is an [R Markdown](https://rmarkdown.rstudio.com/) document.  Follow the link to learn more about R Markdown and the notebook format used during the workshop.
+
+**Note:** This tutorial assumes you are familiar with [regular expressions](https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html).  There are [regular expression tutorial materials](https://github.com/nuitrcs/regex_workshop) available.  If you're not familiar with regular expressions, or you're interested in the other functions in stringr, you may want the [brief intro to stringr](https://nuitrcs.github.io/r-tidyverse/html/others.html#stringr) from the bonus session instead.  
+
+This tutorial also includes some practice writing regular expressions in addition to using the stringr package.
+
+You don't need to know or use the rest of the tidyverse to use stringr for regular expressions.  However, there are a few examples below that process the results of extracting data with regular expressions with other tidyverse functions.
+
+# Setup
+
+```{r, eval=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+
+# stringr Intro
+
+Like many other tidyverse packages, the stringr package provides a unified approach to working with text in R.  The functionality in stringr can be achieved with other base R functions, but the inputs, names, and output vary.  With stringr, there's consistency.  For example, the primary functions are named starting with `str_` and they take the text you want to work with as the first input.
+
+Other tidyverse packages also use a similar text matching approach as stringr.  For example, you can select columns that match a regular expression with `contains` select helper.  And when [separating columns or pivoting data](https://nuitrcs.github.io/r-tidyverse/html/tidyr.html#separate-variable-names) with tidyr, regular expressions can help there too.
+
+
+# Matching/Finding
+
+Let's start with matching text -- just finding (i.e. **detecting**) which input strings match an expression.  First, we need some text to match.  We'll use a list of astronauts from Wikipedia:
+
+```{r}
+astronauts <- c("    United States male Joseph M. Acaba",
+                "    United States male Loren Acton",
+                "    United States male James Adamson",
+                "    Soviet Union Russia male Viktor M. Afanasyev",
+                "    Kazakhstan male Aydyn Aimbetov, first cosmonaut by KazCosmos-selection in space",
+                "    United States male Thomas Akers",
+                "    Japan male Toyohiro Akiyama, the first business-sponsored hi space traveler and the first Japanese person in space",
+                "    Soviet Union male Vladimir Aksyonov",
+                "    Saudi Arabia male Sultan Salman Al Saud, first Saudi Arabian in space, only royal person in space, first Middle Eastern person in space",
+                "    United States male Buzz Aldrin, moonwalked, flew on Apollo 11; second person to walk on the Moon",
+                "    Bulgaria male Aleksandr Panayotov Aleksandrov",
+                "    Soviet Union male Aleksandr Pavlovich Aleksandrov",
+                "    United States male Andrew M. Allen",
+                "    United States male Joseph P. Allen",
+                "    United Arab Emirates male Hazza Al Mansouri, first UAE astronaut",
+                "    United States male Scott Altman",
+                "    United States male William Anders, first Asian-born person in space (born in Hong Kong, but an American citizen)",
+                "    United States male Clayton Anderson",
+                "    United States male Michael P. Anderson (1959–2003), died on February 1, 2003, in the Space Shuttle Columbia disaster of STS-107[7]",
+                "    Iran United States female Anousheh Ansari, fourth spaceflight participant, first woman of Muslim descent in space, and first Iranian in space",
+                "    United States male Dominic A. Antonelli",
+                "    United States male Jerome Apt",
+                "    United States male Lee Archambault",
+                "    United States male Neil Armstrong (1930–2012), moonwalked, flew on Apollo 11; first person to walk on the Moon[8]",
+                "    United States male Richard R. Arnold",
+                "    Russia male Oleg Artemyev",
+                "    Soviet Union male Anatoly Artsebarsky",
+                "    Soviet Union male Yuri Artyukhin (1930–1998)[9]",
+                "    United States male Jeffrey Ashby",
+                "    Soviet Union male Oleg Atkov",
+                "    Soviet Union male Toktar Aubakirov, first Kazakh born person in space",
+                "    United States female Serena Auñón-Chancellor",
+                "    Soviet Union Russia male Sergei Avdeyev")
+```
+
+We'll start by just getting an indicator, TRUE or FALSE, as to whether each piece of text contains our pattern.  Let's find lines with a number (`\d`) in them to start.
+
+To type a `\`, we'll need to double it.  R doesn't inherently know that it's a regular expression, so it treats `\` as an escape -- to keep an actual `\` in the regular expression, we do `\\`.  
+
+```{r}
+str_detect(astronauts, "\\d")
+```
+
+stringr functions automatically assume that any argument named "pattern" is a regular expression.  It passes the input to the `regex` function for processing.  If we wanted to match a literal string instead, we could instead wrap the input in `fixed()`.  
+
+```{r}
+str_detect(astronauts, ".")  # regular expression, matches anything
+```
+
+```{r}
+str_detect(astronauts, fixed("."))  # not a regex - matches actual .
+```
+
+## Flags
+
+To set regular expression flags, such as case insensitive or dotall, we'll need to use the `regex` function directly.  For example:
+
+```{r}
+str_detect(astronauts, regex("united states", 
+                             ignore_case = FALSE))
+```
+
+Open the help page with `?stringr::modifiers`.
+
+
+## Helper Function
+
+stringr has a very handy helper function that will show you the matches for a regular expression.  It will open a viewer for the text in the Viewer tab in the bottom right window in RStudio.  
+
+```{r}
+str_view_all(astronauts, "United States")
+```
+
+To view the full output, click on the icon to open it in a new window.  
+
+
+## Convenience Matching
+
+We could use `^` and `$` to match the beginning and end of lines, but since this is a common operation, there are also stringr functions to do this:
+
+```{r}
+str_starts(astronauts, " ")
+```
+
+
+```{r}
+str_ends(astronauts, "]")
+```
+
+There's also a function to count the number of matches in a given string.  Note that the `astronauts` vector contains many separate strings -- this function counts the number of matches in each of these individual strings:
+
+```{r}
+str_count(astronauts, "a")  # count a's
+str_count(astronauts, " [A-Z]")  # count words starting with a capital letter
+```
+
+
+### EXERCISE
+
+`sentences` is a vector built in to stringr.  It has short sentences in it.  We'll work with the first 20 sentences: `sent20`.
+
+Find which sentences in `sent20` have a word with at least 6 letters.
+
+Reminders:
+
+* Make sure you've run the code to load tidyverse: `library(tidyverse)`
+* `\w` matches word characters -- remember to double the `\`
+* Use `{min, max}` to specify how many times a previous character should match.  For example, match a repeated at least 3 times: `a{3,}`
+
+```{r, eval=TRUE}
+sent20 <- sentences[1:20]
+```
+
+
+
+# Replacing
+
+Let's move beyond matching text to replacing text.  An important thing to remember is that ALL of the text that matches the regular expression will be replaced, not just groups.  You can reference captured groups with `\1` for the first group, `\2` for the second group, etc.  When including these in the replacement expression, you need to double the `\`: `\\1`
+
+```{r}
+str_replace(astronauts, "[mM]oon", "MOON")
+```
+
+If we look at the results, not all cases of "moon" or "Moon" were replaced.  Let's pull the lines in `astronauts` that contain "MOON" with `str_subset`:
+
+```{r}
+str_replace(astronauts, "[mM]oon", "MOON") %>%
+  str_subset("MOON")
+```
+
+Only the first instance of moon or Moon in each line was replaced.  If we want to replace ALL of the times it appears, we need to use `str_replace_all` instead.  This is equivalent to turning on the global regular expression flag.  
+
+```{r}
+str_replace_all(astronauts, "[mM]oon", "MOON") %>%
+  str_subset("MOON")
+```
+
+There are `*_all()` versions of many of the stringr functions.  
+
+If we have capturing groups in our expression, we can use them in the replacement:
+
+```{r}
+str_replace(astronauts, "    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)", "\\2, \\1, \\3")
+```
+
+One common replacement case is when we just want to remove something.  There's a convenience function to replace matching text with an empty string, instead of having to type that out.
+
+Remove the note markers like `[1]` from the end of some of the lines:
+
+```{r}
+str_remove(astronauts, "\\[\\d+\\]")
+```
+
+
+
+### EXERCISE
+
+Using `sent20` again (created above), replace any of the following words with ANIMAL: chicken, hog, salmon
+
+Reminder: 
+
+* You could capture multiple different words with an expression like: `(word 1|word 2|word 3)`.  `|` is or
+
+```{r}
+
+```
+
+
+
+# Extracting
+
+What if we want to pull out a specific piece of information?  Or more than one piece of information?
+
+There are a few variations on this.  First, extracting the entire match:
+
+```{r}
+str_extract(astronauts, "f?e?male")
+```
+
+If there may be more than one match per line, we can use `str_extract_all`.  BUT it will make things more complicated, because instead of having a vector returned, we get a list of vectors:
+
+```{r}
+str_extract_all(astronauts, "[mM]oon")
+```
+
+`character(0)` is an empty vector of type "character" which means no match was found.  
+
+We can instead get the results as a matrix of character values:
+
+```{r}
+str_extract_all(astronauts, "[mM]oon", simplify=TRUE)
+```
+
+The character matrix may be all you need.  You can turn it into a data frame with:
+
+```{r}
+str_extract_all(astronauts, "[mM]oon", simplify=TRUE) %>% data.frame()
+# or: data.frame(str_extract_all(astronauts, "[mM]oon", simplify=TRUE))
+```
+
+But, if we were working with a column in a data frame/tibble as part of a dplyr workflow, things might get complicated:
+
+```{r}
+astro_df <- tibble(id=1:length(astronauts), 
+                   info=astronauts)
+astro_df
+```
+
+`str_extract_all` will result in a list column:
+
+```{r}
+astro_df %>%
+  mutate(moons = str_extract_all(info, "[mM]oon"))
+```
+
+We can unnest this: 
+
+```{r}
+astro_df %>%
+  mutate(moons = str_extract_all(info, "[mM]oon")) %>% 
+  unnest_wider(moons)  
+```
+
+
+### EXERCISE
+
+Instead of replacing animal names (chicken, hog, salmon) in `sent20`, let's extract the animal name instead:
+
+```{r}
+
+```
+
+
+
+
+## Extracting Groups
+
+What if we want to use capturing groups instead of extracting all of the text that matches the expression?  
+
+```{r}
+str_match(astronauts, "    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)")
+```
+
+This gives us a character matrix with 5 columns:
+
+* The entire text matched by the regular expression
+* Text captured by group 1
+* Text captured by group 2
+* Text captured by group 3
+* Text captured by group 4 (which we don't need, just used for `|`) -- we could make this group non-capturing in our expression instead with `?:` - `(?:,.+|$|\\(.+)`, or just ignore this output
+
+We can convert this to a data frame like we did above.  If we're working with a dataframe:
+
+```{r}
+astro_df %>%
+  mutate(astro = str_match(info, "    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)")) 
+```
+
+The output looks like magically got separate columns.  But we didn't:
+
+```{r}
+astro_df %>%
+  mutate(astro = str_match(info, "    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)")) %>%
+  dim()
+```
+
+Instead of using `str_match` and unnesting, when we have capturing groups, we can use `tidyr::extract` instead.  And it lets us name the resulting columns.  Use `NA` to omit a group.  
+
+```{r}
+astro_df %>%
+  extract(info, 
+          into=c("country", "gender", "name", NA), 
+          regex="    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)")
+```
+
+If we want to keep the original data as well:
+
+```{r}
+astro_df %>%
+  extract(info, 
+          into=c("country", "gender", "name", NA), 
+          regex="    (.+) (f?e?male) (.+?)(,.+|$|\\(.+)",
+          remove = FALSE)
+```
+
+
+### EXERCISE
+
+Extract the second and third words from each sentence in `sent20`
+
+Note: The third sentence makes this a little tricky.  You can ignore this sentence if you want.  Take it as a challenge to write a regex that also works on sentence 3.
+
+```{r}
+
+```
+
+
+
+# Raw Strings
+
+Doubling `\` can get annoying and confusing.  There is an alternative added recently to R.  We can define a "raw" string that doesn't require us to escape `\`.  Instead of `"..."`, we use `r"(...)"` Then we can use single `\`:
+
+```{r}
+str_replace(astronauts, r"(    (.+) (f?e?male) (.+?)(,.+|$|\(.+))", r"(\2, \1, \3)")
+```
+
+Note that we needed to change 3 things:
+
+* `r` in front of the expression right before the `"`
+* `(` and `)` inside the opening and closing `"` - these parentheses are NOT part of the regular expression
+* Change double `\\` to `\`
+
+
+# Recap
+
+You now know how to use regular expressions in R.  As we saw in a few spots, sometimes you need tools other than just regular expressions to do what you want.  Don't be afraid to break things down into multiple steps and use all of the different tools available in R to get your data in the shape you want.
+
+

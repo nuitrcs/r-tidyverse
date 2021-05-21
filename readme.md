@@ -35,6 +35,9 @@ Links for each session will show the rendered html file.  There is a button in t
 Additional Sessions:
 
 * [Bonus 1](https://nuitrcs.github.io/r-tidyverse/html/others.html): utility packages – stringr, lubridate, forcats, readxl: this is an overview lecture without exercises
+* [Regular Expressions with stringr](https://nuitrcs.github.io/r-tidyverse/html/stringr.html): requires knowledge of regular expressions
+* [dplyr with databases](https://github.com/nuitrcs/databases_workshop/tree/master/r): our database workshop materials include an example of using dplyr directly with a database connection instead of writing SQL queries
+
 
 ## Learning More
 
