@@ -74,7 +74,7 @@ police %>%
 We get one column per summary variable we create.  Once we group below, we'll see why we get the output in columns instead of rows.
 
 
-## EXERCISE
+### EXERCISE
 
 Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function (hint: if naming the output "count", `count = n()`).
 
@@ -238,7 +238,7 @@ police %>%
 
 There's considerable variation here, from 1.1 warnings for every citation given to 2.2 warnings for every citation given.
 
-## EXERCISE
+### EXERCISE
 
 Compute the `min()` and `max()` `vehicle_year` for each `vehicle_make`.
 
@@ -315,7 +315,7 @@ police %>%
 ```
 
 
-## EXERCISE
+### EXERCISE
 
 Sort the data by vehicle_make and then vehicle_year.
 
@@ -358,7 +358,7 @@ police %>%
 ```
 
 
-## EXERCISE
+### EXERCISE
 
 How many times does each type of violation appear in the dataset?  Bonus: sort the results from most to least frequent.  You can do this with `arrange()` or look at the documentation for `count()` to find another option.
 
