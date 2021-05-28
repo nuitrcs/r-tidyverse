@@ -190,14 +190,15 @@ ggplot(penguins, aes(x = bill_length_mm,
 
 Note that the smoothing was done by group.  Specifying `color` effectively grouped our data, much like what happens with `group_by` in dplyr.
 
-If we color by a continuous variable, we get a gradient, instead of individual colors:
+
+### EXERCISE
+
+Repeat the same plot as above, `bill_length_mm` vs. `bill_depth_mm`, but `color` by `body_mass_g` instead of `species`.
 
 ```{r}
-ggplot(penguins, aes(x = bill_length_mm, 
-                     y = bill_depth_mm,
-                     color = body_mass_g)) +  
-  geom_point() 
+
 ```
+
 
 
 ## Labels/Titles
@@ -229,7 +230,7 @@ Plot `flipper_length_mm` vs. `body_mass_g` and color by `sex`.  Label the axes a
 
 ## Axis Limits
 
-To change the axes min and max values, like we would with `xlim` or `ylim` in base R graphics, we have to use a scale function and set the `limits` argument:
+To change the axes min and max values, like we would with `xlim` or `ylim` in base R graphics, we use a scale function and set the `limits` argument:
 
 ```{r}
 ggplot(penguins, aes(x = bill_length_mm, 
@@ -268,7 +269,7 @@ ggplot(penguins, aes(___)) +
 
 
 
-## Styling with Themes
+## Styling 
 
 Themes control the look of the plot not related to the data: fonts, backgrounds, grid lines, axis lines, etc.
 
@@ -276,7 +277,7 @@ There are some built-in themes (`theme_minimal()`, `theme_bw()`, `theme_classic(
 
 ```{r}
 ggplot(penguins, aes(body_mass_g)) + 
-  geom_histogram() + 
+  geom_histogram(bins = 30) + 
   theme_minimal()
 ```
 
@@ -284,13 +285,21 @@ For further control, use `theme` instead or in addition:
 
 ```{r}
 ggplot(penguins, aes(body_mass_g)) + 
-  geom_histogram() + 
+  geom_histogram(bins = 30) + 
   theme_minimal() + 
   theme(panel.grid.major.x = element_blank(),  # get rid of the vertical grid lines
         panel.grid.minor.x = element_blank())
 ```
 
+Many theme elements are controlled by setting options in additional `element` functions:
+
+* `element_blank()` - omit the element
+* `element_text()` 
+* `element_line()`
+* `element_rect()`
+
 These are options that you will generally google for how to do: "ggplot remove gridlines", "ggplot change font size", etc.
+
 
 In addition to themes, you can control some aspects of the data-driven elements of the plot directly, without using a variable to define them.  For example with color or size, if we specify them outside of a call to `aes()` within the geom function:
 
@@ -301,6 +310,20 @@ ggplot(penguins, aes(x = bill_length_mm,
 ```
 
 it colors all of the points the same color.  
+
+### EXERCISE
+
+Change the `fill` color for the bars in our histogram above to be "darkgreen".  The code from above is copied below to get you started.
+
+```{r, eval=FALSE}
+ggplot(penguins, aes(body_mass_g)) + 
+  geom_histogram(bins = 30) + 
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),  
+        panel.grid.minor.x = element_blank())
+```
+
+
 
 ## Pipes
 
