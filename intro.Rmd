@@ -52,7 +52,7 @@ Let's import the data we'll be using.  The data is from the [Stanford Open Polic
 We're going to use the `read_csv` function from the `readr` package, which is part of the tidyverse.  The `read_csv` function works like `read.csv` except is has some different defaults, guesses data types a bit differently, and produces a tibble instead of a normal data frame (details coming).  
 
 ```{r, eval=TRUE}
-police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv")
+police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv")
 ```
 
 The output message that you get tells you want data type it guessed for each column based on the format of the information.  `col_double()` means numeric data.  `col_logical()` means boolean TRUE/FALSE values.  Note that it also automatically read and identified date and time values and converted them to date and time objects -- not just string/character data.    
@@ -76,7 +76,7 @@ Sometimes, we might be OK with having these values go to missing.  But we can al
 
 
 ```{r, eval=TRUE}
-police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv",
+police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
                    col_types=c("beat"="c", "location"="c"))
 ```
 
@@ -95,7 +95,7 @@ Look at the documentation (help) page for `read_csv`.  You can open it by typing
 Change the code below so that **only** empty strings "" and "N/A" values are imported as missing.  Look at `fix_data` after importing so you can check the values.
 
 ```{r}
-fix_data <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/missing.csv")
+fix_data <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/missing.csv")
 fix_data
 ```
 
@@ -314,8 +314,8 @@ Sometimes we may still want to save the result of some expression, such as after
 
 ```{r}
 police60201 <- police %>%
-  select(date, time, beat, type, outcome) %>%
   filter(location == "60201")
+  select(date, time, beat, type, outcome) 
 ```
 
 
