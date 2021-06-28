@@ -314,7 +314,7 @@ Sometimes we may still want to save the result of some expression, such as after
 
 ```{r}
 police60201 <- police %>%
-  filter(location == "60201")
+  filter(location == "60201") %>%
   select(date, time, beat, type, outcome) 
 ```
 
