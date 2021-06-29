@@ -34,7 +34,7 @@ For this session, we're learning three additional dplyr functions: group_by, sum
 We're using the same data as session 1.  
 
 ```{r, eval=TRUE}
-police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/master/data/ev_police.csv",
+police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
                    col_types=c("beat"="c", "location"="c"))
 ```
 
