@@ -35,12 +35,12 @@ We're going to use COVID-19 data by county and demographics by county for joinin
 
 ```{r, eval=TRUE}
 # county level data
-demo <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/master/data/county_demographics.csv")
-cases <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/master/data/county_cases.csv")
-deaths <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/master/data/county_deaths.csv")
+demo <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/county_demographics.csv")
+cases <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/county_cases.csv")
+deaths <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/county_deaths.csv")
 
 # state level data
-state_stats <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/master/data/state_covid.csv")
+state_stats <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/state_covid.csv")
 ```
 
 I've introduced some missing data for the purposes of this workshop.  Get the full COVID-19 case data from https://usafacts.org/visualizations/coronavirus-covid-19-spread-map/.  COVID-19 case and death data included here is as of early July 2020.  Demographic variables are census estimates for July 2019.  
@@ -146,6 +146,8 @@ In this second example, each state in the state data set matches to multiple row
 There can also be cases where the combination of two different variables is the "key" -- where both columns need to match for the data sets to be joined correctly.  
 
 There is also a more complicated case where you don't have clean "key" variables but you still want to join two datasets.  This requires fuzzy or approximate matching using variables in the two data sets, which is beyond the scope of what we can cover today.  A case where this might happen is when you have country names (not ISO codes), and variants such as DRC vs. Democratic Republic of the Congo vs. Congo, DR (yes, this happens regularly).  
+
+There's a useful package called [tidylog](https://github.com/elbersb/tidylog) that will give you information on what happened with the join.  It can help you detect problems.  We aren't using it here, but it's something you may want to look at later.
 
 Today, we're assuming there is some clean key to match on where values match exactly.
 
