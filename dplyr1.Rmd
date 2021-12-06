@@ -29,7 +29,7 @@ library(tidyverse)
 The data is from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/data/) and includes vehicle stops by the Evanston police in 2017.  We're reading the data in from a URL directly.  
 
 ```{r, eval=TRUE}
-police <- read_csv("https://github.com/nuitrcs/r-online-2020/raw/main/data/ev_police.csv",
+police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
                    col_types=c("beat"="c", "location"="c"))
 ```
 
