@@ -10,7 +10,7 @@ These materials support a series of hour long interactive, virtual workshops on 
 
 Also, install (or update) the tidyverse package.  Instructions are at the bottom of the [installation instructions page](https://sites.northwestern.edu/researchcomputing/resources/r-and-rstudio/).  If you run into installation issues (about 5-10% of you are likely to based on past workshops), you (Northwestern folks) can send me an email at christina.maimone@northwestern.edu.
 
-I will be using tidyverse version 1.3.1 and R version 4.1.0 in the workshop (any R version starting with a 4 should be OK).  You will want to update the tidyverse package to at be at least 1.3.0, as there were notable changes from earlier versions.  To update a package, make sure you are starting from a fresh R session (no packages loaded), and then just install it again:  `install.packages("tidyverse")`.
+I will be using tidyverse version 1.3 and R version 4.1 or later in the workshop (any R version starting with a 4 should be OK).  You will want to update the tidyverse package to at be at least 1.3.0, as there were notable changes from earlier versions.  To update a package, make sure you are starting from a fresh R session (no packages loaded), and then just install it again:  `install.packages("tidyverse")`.
 
 
 ## Materials
