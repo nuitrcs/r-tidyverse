@@ -55,46 +55,27 @@ We're going to use the `read_csv` function from the `readr` package, which is pa
 police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv")
 ```
 
-The output message that you get tells you want data type it guessed for each column based on the format of the information.  `col_double()` means numeric data.  `col_logical()` means boolean TRUE/FALSE values.  Note that it also automatically read and identified date and time values and converted them to date and time objects -- not just string/character data.    
+The output message that you get tells you want data type it guessed for each column based on the format of the information.  "chr" is character or text data, "dbl" is numeric (stands for double, which is technical term for a type of number), "lgl" is logical/boolean (TRUE/FALSE).  Note that it also automatically read and identified date and time values and converted them to date and time objects -- not just string/character data.    
 
-At the bottom of the output, it also tells you about any problems it encountered: when if found a value that doesn't match what it thinks is the data type for the column.  When it guesses the data type for each column, it only uses the first 1000 rows by default. 
-
-In this case, all of these parsing failures are in the same column: "beat".  If we look at what type it read in "beat" as above, it says `col_double()`, which is a numeric type.  And if we look at the initial values of this variable, it does look numeric:
-
-```{r}
-police$beat[1:10]
-```
-
-
-For values that can't be automatically converted to the column type, it fills in missing.  Look at row 1015, one of the rows with a parsing error:
-
-```{r}
-police[1015, "beat"]
-```
-
-Sometimes, we might be OK with having these values go to missing.  But we can also manually specify column types for cases where the assumption that `read_csv` makes is wrong.  We use the `col_types` argument (similar to colClasses for `read.csv`).  Let's make the "beat" column character data, since while the beats do have numbers, we wouldn't want to treat the values as numeric anyway (e.g. we wouldn't average the beat). While we're at it, let's also make location to be character data, since it is zip codes.
+We can also manually specify column types for cases where the assumption that `read_csv` makes is wrong.  We use the `col_types` argument (similar to colClasses for `read.csv`).  Let's make the location to be character data, since it is zip codes -- zip codes should not be treated as numbers.
 
 
 ```{r, eval=TRUE}
 police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
-                   col_types=c("beat"="c", "location"="c"))
+                   col_types=c("location"="c"))
 ```
-
-One way to specify `col_types` is with a named vector, where the name is the name of the column ("beat") and the value is the type of the data: "c" is short for "c"haracter data.  
-
-This time we don't get any parsing errors.
 
 ### EXERCISE
 
 Remember: you need to have loaded tidyverse, so execute the cells above.
 
-We have a dataset that includes [ISO two-letter country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).  The country code for Namibia is NA, so we don't want to read "NA" in as missing.
+We have a dataset that includes [ISO two-letter country codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).  The country code for Namibia is NA, so we don't want to read "NA" in as missing, which it does by default (see how "NA" is grayed out in the output below for the Namibia country code?).
 
 Look at the documentation (help) page for `read_csv`.  You can open it by typing `?read_csv` in the console.  The `na` argument determines what values are imported as missing `NA`.  
 
-Change the code below so that **only** empty strings "" and "N/A" values are imported as missing.  Look at `fix_data` after importing so you can check the values.
+Change the code below so that **only** empty strings "" and "N/A" values are imported as missing (not "NA").  Look at `fix_data` after importing so you can check the values.
 
-```{r}
+```{r, eval=TRUE}
 fix_data <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/missing.csv")
 fix_data
 ```
