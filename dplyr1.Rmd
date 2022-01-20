@@ -30,7 +30,7 @@ The data is from the [Stanford Open Policing Project](https://openpolicing.stanf
 
 ```{r, eval=TRUE}
 police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
-                   col_types=c("beat"="c", "location"="c"))
+                   col_types=c( "location"="c"))
 ```
 
 
@@ -176,7 +176,7 @@ select(police, -contains("subject"))
 ```
 
 
-And there are even more [helper functions](https://tidyselect.r-lib.org/reference/select_helpers.html).  
+And there are even more [select helper functions](https://tidyselect.r-lib.org/reference/select_helpers.html).  
 
 ### EXERCISE
 
@@ -396,5 +396,5 @@ Hint: it's ok if you take two steps to do this.
 
 You now can use `select` and `filter` to subset your data in a wide variety of ways, and `mutate` to update variables or create new ones.  
 
-Next week: the three other common dplyr "verb" functions for working with data frames: group_by, summarize, and arrange.  
+Next session: the three other common dplyr "verb" functions for working with data frames: `group_by`, `summarize`, and `arrange`.  
 

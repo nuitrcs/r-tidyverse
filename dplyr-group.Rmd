@@ -35,13 +35,13 @@ We're using the same data as session 1.
 
 ```{r, eval=TRUE}
 police <- read_csv("https://raw.githubusercontent.com/nuitrcs/r-tidyverse/main/data/ev_police.csv",
-                   col_types=c("beat"="c", "location"="c"))
+                   col_types=c("location"="c"))
 ```
 
 
 # Summarize
 
-We'll start with `summarize()` (or `summarise()`).  We use `mutate()` when we want the output to have the same length as the input -- when we're operating on the individual elements in a vector - we want a value for every row in the data.  When we want to condense multiple values down to a single (or a few values), such as taking the mean or standard deviation of a vector), we use summarize instead.
+We'll start with `summarize()` (or `summarise()` - British spelling is accepted).  We use `mutate()` when we want the output to have the same length as the input -- when we're operating on the individual elements in a vector - we want a value for every row in the data.  When we want to condense multiple values down to a single (or a few values), such as taking the mean or standard deviation of a vector), we use summarize instead.
 
 ```{r}
 police %>% 
@@ -51,7 +51,7 @@ police %>%
 
 Note that even though there's just one value, we get a tibble returned.  This is what to expect with the tidyverse.
 
-As a side note, if we needed the single value (or a single vector), we could `pull()` it:
+As a side note, if we needed the single value (or a single vector), we could `pull()` it out of the tibble/data frame:
 
 ```{r}
 police %>% 
@@ -76,7 +76,7 @@ We get one column per summary variable we create.  Once we group below, we'll se
 
 ### EXERCISE
 
-Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows in the data with the `n()` function (hint: if naming the output "count", `count = n()`).
+Use summarize to compute the `min()` and `max()` `vehicle_year`
 
 ```{r}
 
@@ -87,7 +87,7 @@ Compute the `min()` and `max()` `vehicle_year`.  Also compute the number of rows
 
 If we want to apply the same summary functions to multiple columns in our data frame, we can write out all of the summary commands explicitly, or we can use `across()` to select which variables to summarize with which functions.
 
-Let's use the `n_distinct()` function to count the number of distinct values in each column.  This will help us see which columns don't have useful information because everything is the same.
+Let's use the `n_distinct()` function to count the number of distinct values in each column (`n_distinct(x)` is the same as `length(unique(x))`.  This will help us see which columns don't have useful information because every value is the same.
 
 `across()` selects columns using the helper functions you could give to `select()` directly.  We'll use `everything()` here to select all columns.
 
@@ -112,7 +112,7 @@ police %>%
                    list(min, max)))   # take the min and max of each column
 ```
 
-To fix the names in the output, explicitly name our summary functions:
+To fix the names in the output, explicitly name our summary functions in the list:
 
 ```{r}
 police %>%
@@ -125,29 +125,34 @@ There are other options for output naming patterns available too.
 
 ### EXERCISE
 
-The code below defines a function `na_count()` that counts the number of missing values in a vector.  Apply it to all columns in the police data with `summarize()` and `across()`.
+What if we want to do something to each column that is more complicated than a single function?  For example, counting missing values, which you do with `sum(is.na(x))`.  You can write your own function!
 
-```{r}
+```{r, eval=TRUE}
 na_count <- function(x) {
   sum(is.na(x))
 }
 
 # Example for a single vector:
 na_count(police$subject_age)
+```
 
-# use summarize and across to apply this function to every column
+Now use this new `na_count()` function to count the missing values in each column:
+
+```{r}
 police %>%
   summarize(across(___, ___))
 ```
 
-This is similar to using the `apply()` function in base R:
+
+This is similar to using the apply() function in base R:
 
 ```{r}
 apply(police, 2, na_count)
 ```
 
+#### Advanced Aside
 
-Instead of creating the function ahead of time, we could define it as part of the summarize call.  We use `.x` to stand in for each column, and we put `~` in front of the expression to signal we're creating a function in place (lambda function). 
+Instead of creating the function ahead of time, we could define it as part of the summarize call. We use .x to stand in for each column, and we put ~ in front of the expression to signal we’re creating a function in place (lambda function).
 
 ```{r}
 police %>%
@@ -155,7 +160,7 @@ police %>%
                    ~sum(is.na(.x))))  # define a function here that operates on each column
 ```
 
-
+This is an advanced technique outside of the scope of this workshop.  But if you see a ~ inside `across()`, at least know that someone is defining their own function inline.  
 
 
 # Group By
@@ -184,12 +189,16 @@ When we print this in the console,
 
 we see that it tells us that the tibble (data frame) is grouped by outcome, and that there are two groups.  It doesn't rearrange the rows, it just keeps track of the groups for us. 
 
-Now, combine with summarize:
+Now, combine with summarize.  But first, let's make the `vehicle_age` column we've been using actually part of the `police` dataset so that we don't have to keep creating it:
 
+```{r, eval=TRUE}
+police <- mutate(police, vehicle_age = 2017-vehicle_year)
+```
+
+Now, group and summarize:
 
 ```{r}
 police %>% 
-  mutate(vehicle_age = 2017-vehicle_year) %>%
   group_by(subject_sex) %>%
   summarize(mean_vehicle_age = mean(vehicle_age),
             sd_vehicle_age = sd(vehicle_age))
@@ -197,30 +206,11 @@ police %>%
 
 Now we get one row for each group, and one column for each summary measure.
 
-The warning message `summarise() ungrouping output (override with .groups argument)` is telling us that using `summarize()` undid the `group_by()` that we did before it.  This is what we want to happen.  The message is just part of tidyverse being it's typically verbose self.  To make the warning message not appear, for a singe command, set the .groups option:
+
+We can group by multiple columns, and we'll get all of the combinations of values present across the columns:
 
 ```{r}
 police %>% 
-  mutate(vehicle_age = 2017-vehicle_year) %>%
-  group_by(subject_sex) %>%
-  summarize(mean_vehicle_age = mean(vehicle_age),
-            sd_vehicle_age = sd(vehicle_age),
-            .groups="drop_last")  # this is the default option for .groups for this situation 
-```
-
-Or set the option `dplyr.summarise.inform` to `FALSE` at the beginning of your script to turn it off:
-
-```{r}
-options(dplyr.summarise.inform=FALSE)
-```
-
-
-
-We can group by multiple columns:
-
-```{r}
-police %>% 
-  mutate(vehicle_age = 2017-vehicle_year) %>%
   group_by(subject_sex, subject_race) %>%
   summarize(mean_vehicle_age = mean(vehicle_age),
             sd_vehicle_age = sd(vehicle_age))
@@ -317,7 +307,7 @@ police %>%
 
 ### EXERCISE
 
-Sort the data by vehicle_make and then vehicle_year.
+Sort the data by `vehicle_make` and then `vehicle_year`.
 
 ```{r}
 
