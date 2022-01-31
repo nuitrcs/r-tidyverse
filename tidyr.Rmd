@@ -338,9 +338,9 @@ Then, we may want to create one column per answer choice -- create indicator var
 separate_rows(survey, 
               q2,  # which column to separate
               sep=";") %>%
-  mutate(dummy=1) %>%  # add a dummy column to encode values later
+  mutate(exists=1) %>%  # add a column to encode values later
   pivot_wider(names_from=q2,  # new column names, one for each value
-              values_from=dummy,  # so there will be a 1 where there was a value
+              values_from=exists,  # so there will be a 1 where there was a value
               values_fill=0) ## fills in missing vals with 0 instead of NA
 ```
 
