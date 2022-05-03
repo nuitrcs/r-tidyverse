@@ -25,15 +25,17 @@ You may also want to learn about R Markdown files (and R Notebooks, which are a 
 
 Links for each session will show the rendered html file.  There is a button in the upper right of each file to download the .Rmd file to work with in RStudio yourself. Or [download this entire repository](https://sites.northwestern.edu/researchcomputing/resources/downloading-from-github/) instead to get the .Rmd files for all sessions.
 
+The July 2022 workshop will include the following five parts (one each day):
+
 * [Session 1](https://nuitrcs.github.io/r-tidyverse/html/intro.html): Tidyverse basics
 * [Session 2](https://nuitrcs.github.io/r-tidyverse/html/dplyr1.html): dplyr – select, filter, mutate
 * [Session 3](https://nuitrcs.github.io/r-tidyverse/html/dplyr-group.html): dplyr – group by, summarize, arrange, across    
 * [Session 4](https://nuitrcs.github.io/r-tidyverse/html/dplyr-join.html): dplyr – joins - working with two data frames
-* [Session 5](https://nuitrcs.github.io/r-tidyverse/html/ggplot2.html): a quick intro to ggplot2
-* [Session 6](https://nuitrcs.github.io/r-tidyverse/html/tidyr.html): tidyr – pivot_longer, pivot_wider, separate, separate_rows
+* [Session 5](https://nuitrcs.github.io/r-tidyverse/html/tidyr.html): tidyr – pivot_longer, pivot_wider, separate, separate_rows
 
 Additional Sessions:
 
+* [Visualization with ggplot2](https://nuitrcs.github.io/r-tidyverse/html/ggplot2.html): a quick intro to ggplot2
 * [Bonus 1](https://nuitrcs.github.io/r-tidyverse/html/others.html): utility packages – stringr, lubridate, forcats, readxl: this is an overview lecture without exercises
 * [Regular Expressions with stringr](https://nuitrcs.github.io/r-tidyverse/html/stringr.html): requires knowledge of regular expressions
 * [dplyr with databases](https://github.com/nuitrcs/databases_workshop/tree/master/r): our database workshop materials include an example of using dplyr directly with a database connection instead of writing SQL queries
